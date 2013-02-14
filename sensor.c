@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <pthread.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <arpa/inet.h>
-
 #include "sensor.h"
 
 void check_startup_params(int argc, char *argv[], struct network_params *np)
@@ -15,16 +9,17 @@ void check_startup_params(int argc, char *argv[], struct network_params *np)
 	}
 
 	int s;
-	np->net_mode = USER_PROVIDED_IP;	
+	np->net_mode = USER_PROVIDED_IP;
+	printf("User provided IP will be used.\r\n");	
 	
 	if (strcmp(argv[1], "v4") == 0) np->domain = AF_INET;
 	else if (strcmp(argv[1], "v6") == 0) np->domain = AF_INET6;
 	else {
-		fprintf(stderr, "Wrong version parameter!\n")
+		fprintf(stderr, "Wrong version parameter!\n");
 		exit(EXIT_FAILURE);
 	}
 
-	s = inet_pton(domain, argv[2], np->buf);
+	s = inet_pton(np->domain, argv[2], np->buf);
 	if (s <= 0) {
 		if (s == 0)
 	    		fprintf(stderr, "Wrong address format!\n");
@@ -51,35 +46,44 @@ int main (int argc, char *argv[])
 
 	check_startup_params(argc, argv, &np);
 
-	
 	/* Start worker threads */
 	pthread_t threads[3];
 
+	struct network_params np_array[3];
+	int i;	
+	for (i=0; i<3; i++) {
+		np_array[i].net_mode = np.net_mode;
+		np_array[i].domain = np.domain;
+		strcpy(np_array[i].buf, np.buf);
+	} 
+
 	if(pthread_create(
-			&threads[i], NULL, 
-			temperature_thread_entry, (void *)thread_params)) {
+			&threads[0], NULL, 
+			temperature_thread_entry, (void *) &np_array[0])) {
 		printf("Sensor thread creation failed! Programm will abort!\r\n");
-		pthread_exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
+	/* Uncomment once ready */
+	/*
 	if(pthread_create(
-			&threads[i], NULL, 
-			data_network_thread_entry, (void *)thread_params)) {
+			&threads[1], NULL, 
+			data_network_thread_entry, (void *) &np_array[1])) {
 		printf("Data network thread creation failed! Programm will abort!\r\n");
-		pthread_exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
 	if(pthread_create(
-			&threads[i], NULL, 
-			admin_network_thread_entry, (void *)thread_params)) {
+			&threads[2], NULL, 
+			admin_network_thread_entry, (void *) &np_array[2])) {
 		printf("Admin network thread creation failed! Programm will abort!\r\n");
-		pthread_exit(EXIT_FAILURE);
-	}
+		exit(EXIT_FAILURE);
+	}*/
 	
 	/* Loop while sensor is alive */
 	while (1) {
 	}
-	
+
 	printf("Bye!\r\n");
-	pthread_exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }

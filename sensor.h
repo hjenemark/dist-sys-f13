@@ -3,6 +3,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <arpa/inet.h>
+#include <string.h>
+
+#include "temp_th.h"
+#include "admin_th.h"
+#include "data_th.h"
 
 #define SENSOR_SLEEP_INTERVAL 15
 
