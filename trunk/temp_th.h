@@ -7,7 +7,8 @@
 
 void *temperature_thread_entry(void *np);
 int8_t get_temperature();
-void send_temperature(struct network_params *np, int8_t temperature);
-int8_t get_admin_params(struct network_params *np);
+void send_temperature(struct network_params *np, struct peer_net_params *pnp,
+		      int8_t temperature);
+int8_t get_admin_params(struct peer_net_params *pnp);
 
 #endif
