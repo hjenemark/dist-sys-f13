@@ -47,6 +47,7 @@ int main (int argc, char *argv[])
 	check_startup_params(argc, argv, &np);
 
 	/* Start worker threads */
+	/* TODO: MutEx for Admin IP sharing */
 	pthread_t threads[3];
 
 	struct network_params np_array[3];
