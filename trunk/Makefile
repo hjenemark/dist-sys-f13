@@ -1,3 +1,5 @@
+# Add new files as the pattern goes.
+
 CC=gcc
 CFLAGS = -Wall
 OFLAGS = -c
@@ -29,6 +31,8 @@ run: $(PROJ)
 clean: 
 	rm $(PROJ) *.o
 
+# Don't add the resulting html and latex folders to the repository
+# They can be produced by this makefile on demand.
 dox:
 	doxygen distDoxy
 
