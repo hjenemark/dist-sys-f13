@@ -1,9 +1,16 @@
 #include <stdio.h>
-#include <pthread.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <arpa/inet.h>
 #include <string.h>
+#include <stdint.h>
+#include <unistd.h> /*! ATTN: This works on *nix. Win needs time.h */
+
+#include <pthread.h>
+
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+
 
 #ifndef _COMMON_HEADER
 #define _COMMON_HEADER

@@ -70,8 +70,8 @@ void send_temperature(struct network_params *np, struct peer_net_params *pnp,
 		return 1;
 	}
 
-	sockfd = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol)		
-	connect(sockfd, servinfo->ai_addr, servinfo->ai_addrlen)
+	sockfd = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);		
+	connect(sockfd, servinfo->ai_addr, servinfo->ai_addrlen);
 
 	inet_ntop(servinfo->ai_family, get_in_addr((struct sockaddr *)servinfo->ai_addr),
 	    s, sizeof s);
