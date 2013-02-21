@@ -57,14 +57,14 @@ int main (int argc, char *argv[])
 		np_array[i].domain = np.domain;
 		strcpy(np_array[i].buf, np.buf);
 	} 
-
+	
 	if(pthread_create(
 			&threads[0], NULL, 
 			temperature_thread_entry, (void *) &np_array[0])) {
 		printf("Sensor thread creation failed! Programm will abort!\r\n");
 		exit(EXIT_FAILURE);
 	}
-
+	
 	/* Uncomment once ready */
 	/*
 	if(pthread_create(
@@ -74,6 +74,7 @@ int main (int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
+	
 	if(pthread_create(
 			&threads[2], NULL, 
 			admin_network_thread_entry, (void *) &np_array[2])) {
