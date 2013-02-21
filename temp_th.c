@@ -2,15 +2,6 @@
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once 
 
-void *get_in_addr(struct sockaddr *sa)
-{
-    if (sa->sa_family == AF_INET) {
-        return &(((struct sockaddr_in*)sa)->sin_addr);
-    }
-
-    return &(((struct sockaddr_in6*)sa)->sin6_addr);
-}
-
 void *temperature_thread_entry(void *np)
 {
 	int8_t temperature;
@@ -55,32 +46,29 @@ void send_temperature(struct network_params *np, struct peer_net_params *pnp,
 	encode_message();	
 
 
-	int sockfd, numbytes;  
-	char buf[MAXDATASIZE];
-	struct addrinfo hints, *servinfo, *p;
-	int rv;
-	char s[INET6_ADDRSTRLEN];
+	struct addrinfo hints, *res;
+	int sockfd;
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
 
-	if ((rv = getaddrinfo(pnp->text_ip_addr, DATA_PORT, &hints, &servinfo)) != 0) {
-		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-		return 1;
-	}
+	/* TODO: Add network params from peer network params */
+	char str[15];
+	sprintf(str, "%d", DATA_PORT);	
+	getaddrinfo("127.0.0.1", str, &hints, &res);
 
-	sockfd = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);		
-	connect(sockfd, servinfo->ai_addr, servinfo->ai_addrlen);
+	sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 
-	inet_ntop(servinfo->ai_family, get_in_addr((struct sockaddr *)servinfo->ai_addr),
-	    s, sizeof s);
-	printf("client: connecting to %s\n", s);
+	connect(sockfd, res->ai_addr, res->ai_addrlen);
 
-	freeaddrinfo(servinfo); // all done with this structure
+	char *msg = "Temperature!";
+	int len;
 
-	
-	if (send(sockfd, "Hello, world!", 13, 0) == -1) perror("send");
+	len = strlen(msg);
+	send(sockfd, msg, len, 0);
 
 	close(sockfd);
+	freeaddrinfo(res);
 }
