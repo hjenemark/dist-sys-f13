@@ -115,11 +115,13 @@ int main(void)
         printf("server: got connection from %s\n", s);
 
         if (!fork()) { // this is the child process
-            close(sockfd); // child doesn't need the listener
-            if (send(new_fd, "Hello, world!", 13, 0) == -1)
-                perror("send");
-            close(new_fd);
-            exit(0);
+        	close(sockfd); // child doesn't need the listener
+        	char buff[256];
+		int rx_bytes;
+		rx_bytes = recv(new_fd, buff, 256, 0);
+		printf("Received %d bytes: \"%s\".\r\n", rx_bytes, buff);
+		close(new_fd);
+		exit(0);
         }
         close(new_fd);  // parent doesn't need this
     }
