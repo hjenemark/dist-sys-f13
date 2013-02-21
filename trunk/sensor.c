@@ -31,7 +31,6 @@ void check_startup_params(int argc, char *argv[], struct network_params *np)
 
 int main (int argc, char *argv[])
 {
-	uint8_t net_mode;
 	struct network_params np;
 	
 	printf("Sensor process implementation\r\n");

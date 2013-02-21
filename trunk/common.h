@@ -20,7 +20,7 @@
 struct network_params {
 	uint8_t net_mode;				/*!< User or OS provided IP address */
 	int domain;					/*!< IP version */
-	unsigned char buf[sizeof(struct in6_addr)];	/*!< Binary representation of IP address */
+	char buf[sizeof(struct in6_addr)];	/*!< Binary representation of IP address */
 };
 
 /**
