@@ -28,6 +28,9 @@ common.o: common.c common.h
 run: $(PROJ)
 	./$(PROJ)
 
+# Usage: make multi COUNT=<integer>
+multi: $(PROJ)
+	./runMultiple.sh $(COUNT) $(PROJ)
 clean: 
 	rm $(PROJ) *.o
 
