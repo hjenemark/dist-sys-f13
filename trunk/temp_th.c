@@ -45,23 +45,9 @@ void send_temperature(struct network_params *np, struct peer_net_params *pnp,
 	/* TODO: message encoding needs work */	
 	encode_message();	
 
-
-	struct addrinfo hints, *res;
 	int sockfd;
 
-	memset(&hints, 0, sizeof hints);
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE;
-
-	/* TODO: Add network params from peer network params */
-	char str[15];
-	sprintf(str, "%d", DATA_PORT);	
-	getaddrinfo("127.0.0.1", str, &hints, &res);
-
-	sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-
-	connect(sockfd, res->ai_addr, res->ai_addrlen);
+	sockfd = get_socket(np, pnp, DATA_SUBMIT);
 
 	char *msg = "Temperature!";
 	int len;
@@ -70,5 +56,4 @@ void send_temperature(struct network_params *np, struct peer_net_params *pnp,
 	send(sockfd, msg, len, 0);
 
 	close(sockfd);
-	freeaddrinfo(res);
 }

@@ -21,6 +21,10 @@
 #define DATA_PORT 51001
 #define ADMIN_PORT 51002
 
+#define CONTROL_LISTEN 1
+#define DATA_LISTEN 2
+#define DATA_SUBMIT 3
+
 /**
  *	Structure to keep information about IP address that client will bind to.
  */ 
@@ -39,4 +43,5 @@ struct peer_net_params {
 };
 
 void encode_message();
+int get_socket(struct network_params *np, struct peer_net_params *pnp, int socket_type);
 #endif
