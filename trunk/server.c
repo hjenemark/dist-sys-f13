@@ -76,6 +76,21 @@ int main(void)
             continue;
         }
 
+		char ipstr[INET6_ADDRSTRLEN];
+		void *addr;
+        char *ipver;
+		if (p->ai_family == AF_INET) { // IPv4
+            struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
+            addr = &(ipv4->sin_addr);
+            ipver = "IPv4";
+        } else { // IPv6
+            struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)p->ai_addr;
+            addr = &(ipv6->sin6_addr);
+            ipver = "IPv6";
+        }
+		
+		inet_ntop(p->ai_family, addr, ipstr, sizeof ipstr);
+        printf("Binded on  %s: %s\n", ipver, ipstr);
         break;
     }
 
