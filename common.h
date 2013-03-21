@@ -1,3 +1,7 @@
+/**
+ * \file common.h
+ **/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,7 +48,22 @@ struct peer_net_params {
 	char ipstr[INET6_ADDRSTRLEN];	/*!< Textual representation of IP address */
 };
 
+/**
+ * \brief Encode message for sending over network.
+ **/
 void encode_message();
+
+/** 
+ * \brief Returns socket based on requested parameters.
+ *
+ * \param np A stuct indicating local network parameters. Used when binding on user provided IP.
+ * 
+ * \param pnp A struct indicating peer network parameters.
+ *
+ * \param socket_type Enumerator to indicate requred socket type.
+ *
+ * \return socketnumber: upon success, -1: if failed
+ **/
 int get_socket(struct network_params *np, struct peer_net_params *pnp, 
                int socket_type);
 #endif

@@ -1,3 +1,7 @@
+/**
+ * \file common.c
+ **/
+
 #include "common.h"
 
 /* TODO: Encode a message */
@@ -7,11 +11,18 @@ void encode_message()
 
 int get_socket(struct network_params *np, struct peer_net_params *pnp, int socket_type)
 {
+	/**
+     * Ensure that local and remote IP versions does not conflict.
+    */
 	if((pnp->family == AF_INET && np->family == AF_INET6) ||
 	   (pnp->family == AF_INET6 && np->family == AF_INET)) {
 		printf("[Common] Local and Remote IP versions does not match!\r\n");
 		return -1;
 	}
+
+	/**
+     * Populate hints for network setup
+    */
 	struct addrinfo host_hints, *host_res;
 	int sockfd, rv;
 
@@ -31,7 +42,10 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		host_hints.ai_flags = AI_PASSIVE;
 		node = pnp->ipstr;
 	}
-		
+
+	/**
+     * Populates hints based on socket type.
+    */
 	switch (socket_type) {
 		case CONTROL_LISTEN:
 			sprintf(port_str, "%d", ADMIN_PORT);
@@ -53,6 +67,9 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		return -1;
 	}
 
+	/**
+     * Create and bind socket to required parameters
+    */
 	if ((sockfd = socket(host_res->ai_family, host_res->ai_socktype, host_res->ai_protocol)) == -1) {
 		perror("client: socket");
 		return -1;
@@ -65,6 +82,9 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		}
 	}
 
+	/**
+     * Print informations about local socket.
+    */
 	char host_ipstr[INET6_ADDRSTRLEN];
 	void *host_addr;
 	int host_port;
@@ -79,6 +99,9 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 	inet_ntop(host_res->ai_family, host_addr, host_ipstr, sizeof host_ipstr);
 	printf("[Common] Host ver %s Host addr: %s:%d\r\n", ipver, host_ipstr, ntohs(host_port));
 
+	/**
+     * Populates hints for remote connection.
+    */
 	struct addrinfo peer_hints, *peer_res;
 	memset(&peer_hints, 0, sizeof peer_hints);
 
@@ -88,7 +111,10 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		fprintf(stderr, "getaddrinfo_peer: %s\n", gai_strerror(rv));
 		return -1;
 	}
-	
+
+	/**
+     * Print information about remote connection.
+    */
 	char peer_ipstr[INET6_ADDRSTRLEN];
 	void *peer_addr;
 	int peer_port;
@@ -102,6 +128,9 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 	inet_ntop(peer_res->ai_family, peer_addr, peer_ipstr, sizeof peer_ipstr);
 	printf("[Common] Peer ver %s Peer addr: %s:%d\r\n", ipver, peer_ipstr, ntohs(peer_port));
 	
+	/**
+     * Create connection and free no longer needed hints.
+    */
 	if (connect(sockfd, peer_res->ai_addr, peer_res->ai_addrlen) == -1) {
 		close(sockfd);
 		perror("client: connect");
