@@ -1,13 +1,31 @@
+/**
+ * \file sensor.c
+ **/
 #include "sensor.h"
 
+/** 
+ * \brief Checks startup parameters
+ *
+ * \param argc Integer indicating number of parameters.
+ * 
+ * \param argv[] Pointer to a lits of passed parameters.
+ *
+ * \param np A struct for storing parsed parameters.
+ **/
 void check_startup_params(int argc, char *argv[], struct network_params *np)
 {
+	/**
+     * No parameters provided. Default OS parameters will be used.
+     */
 	if (argc == 1) {
 		np->net_mode = OS_PROVIDED_IP;
 		printf("OS Provided IP will be used.\r\n");
 		return;
 	}
 
+	/**
+     * Update network parameters struct with IP version.
+     */
 	int s;
 	np->net_mode = USER_PROVIDED_IP;
 	printf("User provided IP will be used.\r\n");	
@@ -19,6 +37,9 @@ void check_startup_params(int argc, char *argv[], struct network_params *np)
 		exit(EXIT_FAILURE);
 	}
 
+	/**
+     * Check that provided IP is consistent with IP version.
+     */
 	strcpy(np->ipstr, argv[2]);
 	char buff[INET6_ADDRSTRLEN];
 	s = inet_pton(np->family, argv[2], buff);
