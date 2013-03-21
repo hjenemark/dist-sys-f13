@@ -12,17 +12,19 @@ void check_startup_params(int argc, char *argv[], struct network_params *np)
 	np->net_mode = USER_PROVIDED_IP;
 	printf("User provided IP will be used.\r\n");	
 	
-	if (strcmp(argv[1], "v4") == 0) np->domain = AF_INET;
-	else if (strcmp(argv[1], "v6") == 0) np->domain = AF_INET6;
+	if (strcmp(argv[1], "v4") == 0) np->family = AF_INET;
+	else if (strcmp(argv[1], "v6") == 0) np->family = AF_INET6;
 	else {
-		fprintf(stderr, "Wrong version parameter!\n");
+		printf("Wrong version parameter!\n");
 		exit(EXIT_FAILURE);
 	}
 
-	s = inet_pton(np->domain, argv[2], np->buf);
+	strcpy(np->ipstr, argv[2]);
+	char buff[INET6_ADDRSTRLEN];
+	s = inet_pton(np->family, argv[2], buff);
 	if (s <= 0) {
 		if (s == 0)
-	    		fprintf(stderr, "Wrong address format!\n");
+	    		printf("Wrong address format!\n");
 		else
 	    		perror("inet_pton");
 		exit(EXIT_FAILURE);
@@ -53,9 +55,9 @@ int main (int argc, char *argv[])
 	int i;	
 	for (i=0; i<3; i++) {
 		np_array[i].net_mode = np.net_mode;
-		np_array[i].domain = np.domain;
-		strcpy(np_array[i].buf, np.buf);
-	} 
+		np_array[i].family = np.family;
+		strcpy(np_array[i].ipstr, np.ipstr);
+	}
 	
 	if(pthread_create(
 			&threads[0], NULL, 
