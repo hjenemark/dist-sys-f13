@@ -1,3 +1,6 @@
+/**
+ * \file temp_th.c
+ **/
 #include "temp_th.h"
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once 
@@ -32,16 +35,18 @@ int8_t get_temperature()
 /* TODO: Implement global admin parameters */
 int8_t get_admin_params(struct peer_net_params *pnp)
 {
-	pnp->domain = AF_INET;
-	char my_ip_addr[] = "192.168.1.74";
-	pnp->text_ip_addr = my_ip_addr;
+	pnp->family = AF_INET;
+	strcpy(pnp->ipstr, "127.0.0.1");
 	return 0;
 }
 
 void send_temperature(struct network_params *np, struct peer_net_params *pnp,
 		      int8_t temperature)
 {
-	printf("[Temp] Sending temperature \"%d\" to server \"%s\".\r\n", temperature, pnp->text_ip_addr);	
+	/* Status output for loging and debug */
+	printf("[Temp] Sending temperature \"%d\" to server \"%s\".\r\n", 
+	   	 temperature, pnp->ipstr);
+	
 	/* TODO: message encoding needs work */	
 	encode_message();	
 
