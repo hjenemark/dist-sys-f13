@@ -24,6 +24,9 @@ data_th.o: data_th.c data_th.h
 
 common.o: common.c common.h
 	$(CC) $(CFLAGS) $(OFLAGS) common.c -o common.o
+
+server:
+	$(CC) $(CFLAGS) -o server server.c
 	
 run: $(PROJ)
 	./$(PROJ)
