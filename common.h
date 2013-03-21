@@ -25,23 +25,26 @@
 #define DATA_LISTEN 2
 #define DATA_SUBMIT 3
 
-/**
+/** \struct network_params
+ *
  *	Structure to keep information about IP address that client will bind to.
  */ 
 struct network_params {
 	uint8_t net_mode;				/*!< User or OS provided IP address */
-	int domain;					/*!< IP version */
-	char buf[sizeof(struct in6_addr)];	/*!< Binary representation of IP address */
+	int family;						/*!< IP version */
+	char ipstr[INET6_ADDRSTRLEN];   /*!< Textual representation of IP address */
 };
 
-/**
- *	Structure to keep peer network parameters.
+/** \struct peer_net_params
+ * 
+ *	Structure to keep network parameters of a peer we will connect to.
  */
 struct peer_net_params {
-	int domain;		/*!< IP version */
-	char *text_ip_addr;	/*!< Textual address representation */
+	int family;						/*!< IP version */
+	char ipstr[INET6_ADDRSTRLEN];	/*!< Textual representation of IP address */
 };
 
 void encode_message();
-int get_socket(struct network_params *np, struct peer_net_params *pnp, int socket_type);
+int get_socket(struct network_params *np, struct peer_net_params *pnp, 
+               int socket_type);
 #endif
