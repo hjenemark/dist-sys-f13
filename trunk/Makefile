@@ -32,7 +32,7 @@ server: server.c
 	$(CC) $(CFLAGS) -o server server.c
 
 user: user.c
-	$(CC) $(CFALGS) -o user user.c
+	$(CC) $(CFALGS) -o user user.c common.c
 	
 run: $(PROJ)
 	./$(PROJ)
