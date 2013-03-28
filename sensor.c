@@ -57,7 +57,7 @@ int main (int argc, char *argv[])
 	struct network_params np;
 	
 	printf("Sensor process implementation\r\n");
-	printf("HJR & JP. DTU 2013\r\n");
+	printf("HJE & JP. DTU 2013\r\n");
 
 	/* Check for start-up paramas */	
 	

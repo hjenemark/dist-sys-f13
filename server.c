@@ -134,6 +134,7 @@ int main(void)
         	char buff[256];
 		int rx_bytes;
 		rx_bytes = recv(new_fd, buff, 256, 0);
+		//printf("Received %d bytes: \"%s\".\r\n", rx_bytes, buff);
 		printf("Received %d bytes: \"%s\".\r\n", rx_bytes, buff);
 		close(new_fd);
 		exit(0);
