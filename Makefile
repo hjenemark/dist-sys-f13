@@ -30,6 +30,9 @@ common.o: common.c common.h
 
 server: server.c
 	$(CC) $(CFLAGS) -o server server.c
+
+user: user.c
+	$(CC) $(CFALGS) -o user user.c
 	
 run: $(PROJ)
 	./$(PROJ)
