@@ -5,12 +5,21 @@ CFLAGS = -Wall
 OFLAGS = -c
 LFLAGS = -lpthread
 PROJ = sensor
-OBJS = sensor.o temp_th.o admin_th.o data_th.o common.o node_list.o
+SENOBJS = sensor.o temp_th.o admin_th.o data_th.o common.o node_list.o
+UIOBJS = user.o common.o
 
-all: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(PROJ) $(LFLAGS)
+# Target for user interface
+user: $(UIOBJS)
+	$(CC) $(CFLAGS) $(UIOBJS) -o user 
 
-node_list.o: node_list.c node_list.c
+user.o: user.c
+	$(CC) $(CFLAGS) $(OFLAGS) user.c -o user.o
+
+## Targets for sensor node
+sensor: $(SENOBJS)
+	$(CC) $(CFLAGS) $(SENOBJS) -o $(PROJ) $(LFLAGS)
+
+node_list.o: node_list.c node_list.h
 	$(CC) $(CFLAGS) $(OFLAGS) node_list.c -o node_list.o
 
 sensor.o: sensor.c sensor.h
@@ -31,8 +40,6 @@ common.o: common.c common.h
 server: server.c
 	$(CC) $(CFLAGS) -o server server.c
 
-user: user.c
-	$(CC) $(CFALGS) -o user user.c common.c
 	
 run: $(PROJ)
 	./$(PROJ)
