@@ -5,10 +5,13 @@ CFLAGS = -Wall
 OFLAGS = -c
 LFLAGS = -lpthread
 PROJ = sensor
-OBJS = sensor.o temp_th.o admin_th.o data_th.o common.o
+OBJS = sensor.o temp_th.o admin_th.o data_th.o common.o node_list.o
 
 all: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(PROJ) $(LFLAGS)
+
+node_list.o: node_list.c node_list.c
+	$(CC) $(CFLAGS) $(OFLAGS) node_list.c -o node_list.o
 
 sensor.o: sensor.c sensor.h
 	$(CC) $(CFLAGS) $(OFLAGS) sensor.c -o sensor.o
@@ -25,13 +28,14 @@ data_th.o: data_th.c data_th.h
 common.o: common.c common.h
 	$(CC) $(CFLAGS) $(OFLAGS) common.c -o common.o
 
-server:
+server: server.c
 	$(CC) $(CFLAGS) -o server server.c
 	
 run: $(PROJ)
 	./$(PROJ)
 
 # Usage: make multi COUNT=<integer>
+COUNT=5
 multi: $(PROJ)
 	./runMultiple.sh $(COUNT) $(PROJ)
 clean: 

@@ -18,6 +18,7 @@ void *temperature_thread_entry(void *np)
 	while (1) {
 		temperature = get_temperature();
 		get_admin_params(&admin_addr);
+                //printf(
 		
 		/*send_temperature(my_np, &admin_addr, temperature);*/
 		send_temperature((struct network_params *)np, &admin_addr, temperature);		
