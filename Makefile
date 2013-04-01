@@ -5,8 +5,11 @@ CFLAGS = -Wall
 OFLAGS = -c
 LFLAGS = -lpthread
 PROJ = sensor
+BIN = sensor user server
 SENOBJS = sensor.o temp_th.o admin_th.o data_th.o common.o node_list.o
 UIOBJS = user.o common.o
+
+all: user sensor server
 
 # Target for user interface
 user: $(UIOBJS)
@@ -49,7 +52,7 @@ COUNT=5
 multi: $(PROJ)
 	./runMultiple.sh $(COUNT) $(PROJ)
 clean: 
-	rm $(PROJ) *.o
+	rm $(BIN) *.o
 
 # Don't add the resulting html and latex folders to the repository
 # They can be produced by this makefile on demand.
