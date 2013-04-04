@@ -55,7 +55,7 @@ uint32_t add_node_msg(node_msg** list, uint32_t operation, char* operand, uint32
     return 0;
 }
 
-void print_node_list(node_msg* list){
+void print_node_list_msg(node_msg* list){
     node_msg *current = list;
     printf("[Printing list]\n");
 

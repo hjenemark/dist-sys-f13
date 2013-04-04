@@ -21,7 +21,7 @@ uint32_t add_node_msg(node_msg** list, uint32_t operation, char* operand, uint32
 uint32_t remove_node_msg(node_msg** list, node_msg* lnode);
 
 
-void print_node_list(node_msg* list);
+void print_node_list_msg(node_msg* list);
 
 
 #endif

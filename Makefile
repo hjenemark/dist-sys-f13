@@ -6,7 +6,7 @@ OFLAGS = -c
 LFLAGS = -lpthread
 PROJ = sensor
 BIN = sensor user server
-SENOBJS = sensor.o temp_th.o admin_th.o data_th.o common.o node_list.o
+SENOBJS = sensor.o temp_th.o admin_th.o data_th.o common.o sense_db.o sens_list.o msg_list.o
 UIOBJS = user.o common.o
 
 all: user sensor server
@@ -24,6 +24,15 @@ sensor: $(SENOBJS)
 
 node_list.o: node_list.c node_list.h
 	$(CC) $(CFLAGS) $(OFLAGS) node_list.c -o node_list.o
+
+sense_db.o: sense_db.c
+	$(CC) $(CFLAGS) $(OFLAGS) sense_db.c -o sense_db.o
+
+sens_list.o: sens_list.c
+	$(CC) $(CFLAGS) $(OFLAGS) sens_list.c -o sens_list.o
+
+msg_list.o: msg_list.c
+	$(CC) $(CFLAGS) $(OFLAGS) msg_list.c -o msg_list.o
 
 sensor.o: sensor.c sensor.h
 	$(CC) $(CFLAGS) $(OFLAGS) sensor.c -o sensor.o
