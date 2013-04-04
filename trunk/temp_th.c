@@ -37,7 +37,8 @@ int8_t get_temperature()
 int8_t get_admin_params(struct peer_net_params *pnp)
 {
 	pnp->family = AF_INET;
-	strcpy(pnp->ipstr, "127.0.0.1");
+	//strcpy(pnp->ipstr, "127.0.0.1");
+	strcpy(pnp->ipstr, "10.0.0.10");
 	return 0;
 }
 
