@@ -8,7 +8,7 @@
 #include "sense_db.h"
 
 uint32_t append_temp_db(node_sens** list, char* node_id, time_t timestamp, int32_t sens_value){
-    node_sens* current = list;
+    node_sens* current = *list;
     bool not_found = true;
     
     while(current != NULL){
