@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <unistd.h> /*! ATTN: This works on *nix. Win needs time.h */
 
 #include <pthread.h>
@@ -15,6 +16,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+#include "msg_list.h"
+#include "sens_list.h"
 
 #ifndef _COMMON_HEADER
 #define _COMMON_HEADER
@@ -28,6 +31,12 @@
 #define CONTROL_LISTEN 1
 #define DATA_LISTEN 2
 #define DATA_SUBMIT 3
+
+#define GET_TEMPERATURE 1
+#define REPORT_TEMPERATURE 2
+#define ANNOUNCE_MASTER 3
+#define TIME_REQUEST 4
+#define TIME_REPLY 5
 
 /** \struct network_params
  *
@@ -50,8 +59,12 @@ struct peer_net_params {
 
 /**
  * \brief Encode message for sending over network.
+ * 
+ * For operation REPORT_TEMPERATUR this function uses the prototype:
+ * char* encode_message( uint32_t operation, int8_t temperature, char* ipstr
  **/
-void encode_message();
+char* encode_message( uint32_t operation, ...);
+void* decode_message( char* message);
 
 /** 
  * \brief Returns socket based on requested parameters.

@@ -13,12 +13,13 @@
 
 char* serilization(node_msg* list){
     int32_t count = 0;
-    int32_t temp_int;
     node_msg* current = list;
     char* serial_result = NULL;
-    int32_t marker = 0, t_count, i; 
-    uint32_t t_int_buff[2];
+    int32_t marker = 0, t_count; 
+    int32_t t_int_buff[4];
     char t_buff[4];
+    int32_t temp_int;
+    int8_t i;
 
     while(current != NULL){
         count += 2*4;
@@ -27,11 +28,14 @@ char* serilization(node_msg* list){
         current = current->next;
     }
 
-    serial_result = (char*)calloc(count, sizeof(char));
+    serial_result = (char*)calloc(count + 1, sizeof(char));
     //printf("serial_result length: %d\n", strlen(serial_result));
 
     current = list;
     while(current != NULL){
+        //t_count = snprintf((serial_result + marker), count, "%u%u%s", current->operation, current->op_size, current->operand);
+        //marker += t_count;
+        //printf("t_count: %d\n ser: %s\n",t_count, serial_result);
         t_int_buff[0] = current->operation;
         t_int_buff[1] = current->op_size;
         for(i = 0; i < 2; i++){
@@ -57,6 +61,7 @@ char* serilization(node_msg* list){
 
         strncpy((serial_result + marker), current->operand, current->op_size);
         marker += current->op_size;
+        
 
         //printf("Serial result: %s\n", serial_result);
         //printf("serial_result length: %d\n", strlen(serial_result));
@@ -92,7 +97,8 @@ node_msg* deserialize(char* data){
             marker += 1;
         }
 
-        t_operand = (char*)calloc(sizeof(char), t_op_size);
+        //t_operand = (char*)calloc(sizeof(char), t_op_size);
+        t_operand = (char*)calloc(t_op_size+1, sizeof(char));
         strncpy(t_operand, &data[marker], t_op_size);
         marker += t_op_size;
     
@@ -143,14 +149,13 @@ uint32_t add_node_msg(node_msg** list, uint32_t operation, uint32_t op_size, cha
     }
 
     newnode->operation = operation;
-    newnode->operand = (char*)malloc(op_size * sizeof(char));
+    newnode->operand = (char*)calloc(op_size+1 , sizeof(char));
     memcpy(newnode->operand, operand, op_size);
     newnode->op_size = op_size;
 
-    
     newnode->next = *list;
     *list = newnode;
-    printf("[adding] Node added with operand: %s\n", newnode->operand);
+    //printf("[adding] Node added with operand: %s\n", newnode->operand);
 
     return 0;
 }
