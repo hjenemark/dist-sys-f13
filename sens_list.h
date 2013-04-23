@@ -54,6 +54,10 @@ uint32_t add_node_sens(node_sens** list, char* id, time_t timestamp, int sens_va
  **/
 uint32_t remove_node_sens(node_sens** list, node_sens* lnode);
 
+/**
+ * \brief Clears an entire list of sensor values
+ */
+uint32_t clear_list_sens(node_sens** list);
 
 /**
  * \brief Prints out the content of a list

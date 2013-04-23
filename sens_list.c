@@ -9,6 +9,13 @@
 
 #include "sens_list.h"
 
+uint32_t clear_list_sens(node_sens** list){
+    while(*list != NULL){
+        remove_node_sens(list, *list);
+    }
+    return 0;
+}
+
 uint32_t remove_node_sens(node_sens** list, node_sens* lnode){
     node_sens* current = NULL;
 
@@ -53,7 +60,7 @@ uint32_t add_node_sens(node_sens** list, char* id, time_t timestamp, int sens_va
     memcpy(newnode->node_id, id, NODE_ID_LENGTH);
     newnode->timestamp = timestamp;
     newnode->temp_val = sens_value;
-    printf("[adding] Node added with id: %s\n",(*list)->node_id);
+    //printf("[adding] Node added with id: %s\n",(*list)->node_id);
     
     return 0;
 }
