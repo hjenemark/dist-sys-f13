@@ -11,7 +11,7 @@ char* encode_message(uint32_t operation, ... )
     va_list arguments;
     va_start(arguments, operation);
     node_msg* temp_msg = (node_msg*)calloc(1, sizeof(node_msg));
-    char* serilized;
+    char* serilized=NULL;
     if(operation == REPORT_TEMPERATURE){
         /*11: length of timestamp
          * 1: length of temperature

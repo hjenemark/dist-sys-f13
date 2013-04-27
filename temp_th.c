@@ -3,26 +3,15 @@
  **/
 #include "temp_th.h"
 
-#define MAXDATASIZE 100 // max number of bytes we can get at once 
-
 void *temperature_thread_entry(void *np)
 {
 	int8_t temperature;
 	struct peer_net_params admin_addr;
 
-	/*	
-	struct network_params *my_np;
-	my_np = (struct network_params *)np;	
-	*/
-
 	while (1) {
 		temperature = get_temperature();
 		get_admin_params(&admin_addr);
-                //printf(
-		
-		/*send_temperature(my_np, &admin_addr, temperature);*/
 		send_temperature((struct network_params *)np, &admin_addr, temperature);		
-
 		sleep(SENSOR_SLEEP_INTERVAL);
 	}
 }
@@ -37,8 +26,8 @@ int8_t get_temperature()
 int8_t get_admin_params(struct peer_net_params *pnp)
 {
 	pnp->family = AF_INET;
-	//strcpy(pnp->ipstr, "127.0.0.1");
-	strcpy(pnp->ipstr, "10.0.0.10");
+	strcpy(pnp->ipstr, "127.0.0.1");
+	//strcpy(pnp->ipstr, "10.0.0.10");
 	return 0;
 }
 
@@ -47,19 +36,24 @@ void send_temperature(struct network_params *np, struct peer_net_params *pnp,
 {
 	/* Status output for loging and debug */
 	printf("[Temp] Sending temperature \"%d\" to server \"%s\".\r\n", 
-	   	 temperature, pnp->ipstr);
-	
-	/* TODO: message encoding needs work */	
-	encode_message();	
+	   	 temperature, pnp->ipstr);	
 
-	int sockfd;
+	int32_t sockfd, buflen;
+
+	char buffer[10];
+	buflen = sprintf(buffer, "%d", temperature);
+
+	struct node_message node_msg;
+	node_msg.operation = REPORT_TEMPERATURE;
+	node_msg.op_size = buflen;
+	node_msg.operand = buffer;
+	node_msg.next = NULL;
+
+	char *msg=NULL;
+	msg = serilization(&node_msg);
+	int32_t len = strlen(msg);
 
 	sockfd = get_socket(np, pnp, DATA_SUBMIT);
-
-	char *msg = "Temperature!";
-	int len;
-
-	len = strlen(msg);
 	send(sockfd, msg, len, 0);
 
 	close(sockfd);
