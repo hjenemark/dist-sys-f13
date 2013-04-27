@@ -3,6 +3,7 @@
  **/
 #include <stdbool.h>
 #include "common.h"
+#include "msg_list.h"
 
 uint32_t connect_to_node(struct peer_net_params *pnp, uint32_t *socket)
 {
@@ -17,13 +18,28 @@ uint32_t connect_to_node(struct peer_net_params *pnp, uint32_t *socket)
 	*socket = get_socket(&np, pnp, DATA_SUBMIT);
 	return 0;
 }
-uint32_t promote_node(uint32_t socket)
+uint32_t promote_node(uint32_t socket, uint32_t *promokey)
 {
+	printf("Promoting to master with master key: %u\r\n",*promokey);
+
+	struct node_message* node_msg = NULL;
+	add_node_msg (&node_msg, PROMOTE_TO_MASTER, 0, NULL);
+
+	char buffer[10];
+	uint8_t buflen = snprintf(buffer, 10, "%d", (*promokey));
+	add_node_msg (&node_msg, PROMO_KEY, buflen, buffer);
+
+	char *msg=NULL;
+	msg = serilization(node_msg);
+	int32_t len = strlen(msg);
+
+	send(socket, msg, len, 0);
+	(*promokey)++;
+
 	return 0;
 }
 uint32_t get_avg_temp(uint32_t socket)
 {
-
 	return 0;
 }
 
@@ -31,6 +47,7 @@ int32_t main ()
 {
 	bool admin_connected = false;
 	uint32_t socket, option;
+	uint32_t promokey = 1;
 	struct peer_net_params pnp;
 	
 	printf("User node program.\r\n");
@@ -58,7 +75,7 @@ int32_t main ()
 				admin_connected = true;
 				break;
 			case 3:
-				promote_node(socket);
+				promote_node(socket, &promokey);
 				break;
 			case 4:
 				get_avg_temp(socket);
