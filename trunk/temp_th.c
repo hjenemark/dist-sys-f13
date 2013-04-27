@@ -22,13 +22,22 @@ int8_t get_temperature()
 	return 8;
 }
 
-/* TODO: Implement global admin parameters */
 int8_t get_admin_params(struct peer_net_params *pnp)
 {
-	pnp->family = AF_INET;
-	strcpy(pnp->ipstr, "127.0.0.1");
-	//strcpy(pnp->ipstr, "10.0.0.10");
+	pthread_mutex_lock (&mutex_adminp);
+	pnp->family = admin_net_params.family;
+	strcpy(pnp->ipstr, admin_net_params.ipstr);
+	pthread_mutex_unlock (&mutex_adminp);
 	return 0;
+}
+
+int32_t get_time_offset()
+{
+	int32_t timeoffset;
+	pthread_mutex_lock (&mutex_timeoffset);
+	timeoffset = node_admin_offset;
+	pthread_mutex_unlock (&mutex_timeoffset);
+	return timeoffset;
 }
 
 void send_temperature(struct network_params *np, struct peer_net_params *pnp,
@@ -38,13 +47,20 @@ void send_temperature(struct network_params *np, struct peer_net_params *pnp,
 	printf("[Temp] Sending temperature \"%d\" to server \"%s\".\r\n", 
 	   	 temperature, pnp->ipstr);	
 
-	int32_t sockfd, buflen;
-
-	char buffer[10];
-	buflen = snprintf(buffer, 10, "%d", temperature);
-
+	int32_t sockfd, buflen, timenow, timeoffset, realtime;
+	char buffer[15];
 	struct node_message *node_msg = NULL;
+	
+	buflen = snprintf(buffer, 15, "%d", temperature);
 	add_node_msg (&node_msg, REPORT_TEMPERATURE, buflen, buffer);
+
+	timenow = time(0);
+	timeoffset = get_time_offset();
+	realtime = timenow + timeoffset;
+	printf("[Temp] Real time at admin node: %d\r\n", realtime);
+
+	buflen = snprintf(buffer, 15, "%d", realtime);
+	add_node_msg (&node_msg, TEMP_TIMESTAMP, buflen, buffer);
 
 	char *msg=NULL;
 	msg = serilization(node_msg);

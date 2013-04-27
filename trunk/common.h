@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <unistd.h> /*! ATTN: This works on *nix. Win needs time.h */
+#include <time.h>
 
 #include <pthread.h>
 
@@ -39,6 +40,13 @@
 #define TIME_REPLY 5
 #define PROMOTE_TO_MASTER 6
 #define PROMO_KEY 7
+#define TEMP_TIMESTAMP 8
+
+struct peer_net_params admin_net_params; /*!< IP Params of admin node */
+pthread_mutex_t mutex_adminp; /*!< Mutex to protect admin net params */
+
+int32_t node_admin_offset;
+pthread_mutex_t mutex_timeoffset;
 
 /** \struct network_params
  *

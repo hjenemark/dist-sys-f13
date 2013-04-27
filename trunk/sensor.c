@@ -69,7 +69,19 @@ int main (int argc, char *argv[])
 	check_startup_params(argc, argv, &np);
 
 	/* Start worker threads */
-	/* TODO: MutEx for Admin IP sharing */
+
+	/* TODO: This is temporary until admin parameter detection is implemented */
+	admin_net_params.family = AF_INET;
+	strcpy(admin_net_params.ipstr, "127.0.0.1");
+	/* End of temporary code */
+
+	/* Init time offset */
+	node_admin_offset = 0;
+
+	/* Init mutexes */
+	pthread_mutex_init(&mutex_adminp, NULL);
+	pthread_mutex_init(&mutex_timeoffset, NULL);
+	
 	pthread_t threads[3];
 
 	struct network_params np_array[3];
