@@ -41,16 +41,13 @@ void send_temperature(struct network_params *np, struct peer_net_params *pnp,
 	int32_t sockfd, buflen;
 
 	char buffer[10];
-	buflen = sprintf(buffer, "%d", temperature);
+	buflen = snprintf(buffer, 10, "%d", temperature);
 
-	struct node_message node_msg;
-	node_msg.operation = REPORT_TEMPERATURE;
-	node_msg.op_size = buflen;
-	node_msg.operand = buffer;
-	node_msg.next = NULL;
+	struct node_message *node_msg = NULL;
+	add_node_msg (&node_msg, REPORT_TEMPERATURE, buflen, buffer);
 
 	char *msg=NULL;
-	msg = serilization(&node_msg);
+	msg = serilization(node_msg);
 	int32_t len = strlen(msg);
 
 	sockfd = get_socket(np, pnp, DATA_SUBMIT);
