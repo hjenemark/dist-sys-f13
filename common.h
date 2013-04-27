@@ -37,6 +37,8 @@
 #define ANNOUNCE_MASTER 3
 #define TIME_REQUEST 4
 #define TIME_REPLY 5
+#define PROMOTE_TO_MASTER 6
+#define PROMO_KEY 7
 
 /** \struct network_params
  *
