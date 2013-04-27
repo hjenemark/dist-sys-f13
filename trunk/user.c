@@ -23,13 +23,14 @@ uint32_t promote_node(uint32_t socket)
 }
 uint32_t get_avg_temp(uint32_t socket)
 {
+
 	return 0;
 }
 
 int32_t main ()
 {
 	bool admin_connected = false;
-	uint32_t socket;
+	uint32_t socket, option;
 	struct peer_net_params pnp;
 	
 	printf("User node program.\r\n");
@@ -39,16 +40,13 @@ int32_t main ()
 			printf("Connected to: NONE\r\n") ;
 		printf("Select task:\r\n");
 		printf("[1] Quit.\r\n");
-			printf("[2] Connect to node.\r\n");
+		printf("[2] Connect to node.\r\n");
 		if (admin_connected) {
 			printf("[3] Promote node to Admin mode.\r\n");
 			printf("[4] Get average T from node.\r\n");
 		}
 		
-
-		uint32_t option;
 		scanf("%d", &option);
-
 		switch(option) {
 			case 1:
 				if (admin_connected) close(socket);
