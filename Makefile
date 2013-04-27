@@ -3,7 +3,7 @@
 CC=gcc
 CFLAGS = -Wall
 OFLAGS = -c
-LFLAGS = -lpthread
+LFLAGS = -lpthread -lm
 PROJ = sensor
 BIN = sensor user server
 SENOBJS = sensor.o temp_th.o admin_th.o data_th.o common.o sense_db.o sens_list.o msg_list.o
