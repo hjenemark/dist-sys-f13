@@ -3,7 +3,6 @@
  **/
 #include <stdbool.h>
 #include "common.h"
-#include "msg_list.h"
 
 uint32_t connect_to_node(struct peer_net_params *pnp, uint32_t *socket)
 {
@@ -40,6 +39,28 @@ uint32_t promote_node(uint32_t socket, uint32_t *promokey)
 }
 uint32_t get_avg_temp(uint32_t socket)
 {
+	printf("Requesting average temperature!\r\n");
+	struct node_message* node_msg = NULL;
+	add_node_msg (&node_msg, GET_AVG_TEMP, 0, NULL);
+
+	char *msg=NULL;
+	msg = serilization (node_msg);
+	int32_t len = strlen(msg);
+
+	send(socket, msg, len, 0);
+
+	char buff[256];
+	recv(socket, buff, 256, 0);
+
+	struct node_message* rx_msg;
+	rx_msg = deserialize(buff);
+
+    while (rx_msg != NULL) {
+		if (rx_msg->operation == REPORT_AVG_TEMP)
+			printf("Average temperature: %d",atoi(rx_msg->operand));
+		rx_msg = rx_msg->next;
+	}
+	
 	return 0;
 }
 
