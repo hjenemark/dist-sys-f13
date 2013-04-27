@@ -8,13 +8,13 @@ PROJ = sensor
 BIN = sensor user server
 SENOBJS = sensor.o temp_th.o admin_th.o data_th.o common.o sense_db.o sens_list.o msg_list.o
 SRVOBJS = server.o msg_list.o
-UIOBJS = user.o common.o
+UIOBJS = user.o common.o msg_list.o
 
 all: user sensor server
 
 # Target for user interface
 user: $(UIOBJS)
-	$(CC) $(CFLAGS) $(UIOBJS) -o user 
+	$(CC) $(CFLAGS) $(UIOBJS) -o user $(LFLAGS)
 
 user.o: user.c
 	$(CC) $(CFLAGS) $(OFLAGS) user.c -o user.o
