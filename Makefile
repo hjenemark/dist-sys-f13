@@ -7,6 +7,7 @@ LFLAGS = -lpthread -lm
 PROJ = sensor
 BIN = sensor user server
 SENOBJS = sensor.o temp_th.o admin_th.o data_th.o common.o sense_db.o sens_list.o msg_list.o
+SRVOBJS = server.o msg_list.o
 UIOBJS = user.o common.o
 
 all: user sensor server
@@ -49,8 +50,12 @@ data_th.o: data_th.c data_th.h
 common.o: common.c common.h
 	$(CC) $(CFLAGS) $(OFLAGS) common.c -o common.o
 
-server: server.c
-	$(CC) $(CFLAGS) -o server server.c
+# Target for testing server
+server: $(SRVOBJS)
+	$(CC) $(CFLAGS) $(SRVOBJS) -o server $(LFLAGS)
+
+server.o: server.c
+	$(CC) $(CFLAGS) $(OFLAGS) server.c -o server.o
 
 	
 run: $(PROJ)

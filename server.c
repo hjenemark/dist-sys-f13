@@ -15,6 +15,8 @@
 #include <sys/wait.h>
 #include <signal.h>
 
+#include "msg_list.h"
+
 #define PORT "51001"  // the port users will be connecting to
 
 #define BACKLOG 10     // how many pending connections queue will hold
@@ -132,12 +134,14 @@ int main(void)
         if (!fork()) { // this is the child process
         	close(sockfd); // child doesn't need the listener
         	char buff[256];
-		int rx_bytes;
-		rx_bytes = recv(new_fd, buff, 256, 0);
-		//printf("Received %d bytes: \"%s\".\r\n", rx_bytes, buff);
-		printf("Received %d bytes: \"%s\".\r\n", rx_bytes, buff);
-		close(new_fd);
-		exit(0);
+			int rx_bytes;
+			rx_bytes = recv(new_fd, buff, 256, 0);
+			printf("Received %d bytes: \"%s\".\r\n", rx_bytes, buff);
+			close(new_fd);
+			struct node_message* rx_msg;
+			rx_msg = deserialize(buff);
+			print_node_list_msg(rx_msg);
+			exit(0);
         }
         close(new_fd);  // parent doesn't need this
     }
