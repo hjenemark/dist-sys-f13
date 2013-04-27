@@ -40,4 +40,12 @@ void send_temperature(struct network_params *np, struct peer_net_params *pnp,
  **/
 int8_t get_admin_params(struct peer_net_params *pnp);
 
+
+/** 
+ * \brief Get current admin node to sensor time offset.
+ * 
+ * \return 0: on success.
+ **/
+int32_t get_time_offset();
+
 #endif
