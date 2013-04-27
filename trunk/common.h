@@ -41,6 +41,8 @@
 #define PROMOTE_TO_MASTER 6
 #define PROMO_KEY 7
 #define TEMP_TIMESTAMP 8
+#define GET_AVG_TEMP 9
+#define REPORT_AVG_TEMP 10
 
 struct peer_net_params admin_net_params; /*!< IP Params of admin node */
 pthread_mutex_t mutex_adminp; /*!< Mutex to protect admin net params */
