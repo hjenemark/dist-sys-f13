@@ -103,7 +103,7 @@ void* decode_message( char* message){
                 marker += 1;
             }
             
-            add_node_sens(&temp_list, id, timestamp, sens_val);
+            //add_node_sens(&temp_list, id, timestamp, sens_val);
         }
         current = current->next;
     }
