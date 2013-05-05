@@ -79,23 +79,36 @@ node_msg* deserialize(char* data){
     node_msg* new_list = NULL;
     uint32_t t_operation = 0, t_op_size = 0;
     char* t_operand;
-    int32_t marker = 0, i, end;
+    char temp_char[4];
+    int32_t marker = 0, end;
 
     end = strlen(data);
 
-    //printf("-- De-serializing --\n");
+    printf("-- De-serializing --\n");
+    printf("-- data: %s\n", data);
     
     while(marker < end){
-        t_operation = 0;
-        t_op_size = 0;
-        for(i = 3; i >=0; i--){
+        temp_char[0] = data[marker++];
+        temp_char[1] = data[marker++];
+        temp_char[2] = data[marker++];
+        temp_char[3] = data[marker++];
+
+        t_operation = (uint32_t)atoi(temp_char);
+        temp_char[0] = data[marker++];
+        temp_char[1] = data[marker++];
+        temp_char[2] = data[marker++];
+        temp_char[3] = data[marker++];
+
+        t_op_size = (uint32_t)atoi(temp_char);
+
+        /*for(i = 3; i >=0; i--){
             t_operation += (uint32_t)pow((double)10, (double) i) * (uint32_t)(data[marker] - '0');
             marker += 1;
         }
         for(i = 3; i >=0; i--){
             t_op_size += (uint32_t)pow((double)10, (double) i) * (uint32_t)(data[marker] - '0');
             marker += 1;
-        }
+        }*/
 
         //t_operand = (char*)calloc(sizeof(char), t_op_size);
         t_operand = (char*)calloc(t_op_size+1, sizeof(char));
@@ -106,12 +119,15 @@ node_msg* deserialize(char* data){
         free(t_operand);
     }
 
-    //printf("-- End of de-serializing --\n");
+    printf("-- End of de-serializing --\n");
+    //free(data);
     return new_list;
 }
 
 uint32_t clear_list_msg(node_msg** list){
+    int32_t dd = 0;
     while(*list != NULL){
+        printf("repeat: %d\n", dd++);
         remove_node_msg(list, *list);
     }
     return 0;
