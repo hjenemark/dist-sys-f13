@@ -138,7 +138,8 @@ int main(void)
 			rx_bytes = recv(new_fd, buff, 256, 0);
 			printf("Received %d bytes: \"%s\".\r\n", rx_bytes, buff);
 			close(new_fd);
-			struct node_message* rx_msg;
+			//struct node_message* rx_msg;
+			node_msg* rx_msg;
 			rx_msg = deserialize(buff);
 			print_node_list_msg(rx_msg);
 			exit(0);

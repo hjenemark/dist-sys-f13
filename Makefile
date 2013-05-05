@@ -57,6 +57,8 @@ server: $(SRVOBJS)
 server.o: server.c
 	$(CC) $(CFLAGS) $(OFLAGS) server.c -o server.o
 
+memcheck: $(PROJ)
+	valgrind --leak-check=yes --track-origins=yes ./server
 	
 run: $(PROJ)
 	./$(PROJ)
