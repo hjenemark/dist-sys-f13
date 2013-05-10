@@ -16,6 +16,7 @@
 #include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 
 #include "msg_list.h"
 #include "sens_list.h"
