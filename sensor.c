@@ -55,6 +55,7 @@ void check_startup_params(int argc, char *argv[], struct network_params *np)
 int main (int argc, char *argv[])
 {
 	struct network_params np;
+	np.ipstr[0] = NULL;
 	
 	printf("Sensor process implementation\r\n");
 	printf("HJE & JP. DTU 2013\r\n");
@@ -72,15 +73,20 @@ int main (int argc, char *argv[])
 
 	/* TODO: This is temporary until admin parameter detection is implemented */
 	admin_net_params.family = AF_INET;
-	strcpy(admin_net_params.ipstr, "127.0.0.1");
+	strcpy(admin_net_params.ipstr, "127.0.0.2");
 	/* End of temporary code */
 
 	/* Init time offset */
 	node_admin_offset = 0;
 
+	/* Init master status */
+	node_is_master = 0;
+	current_master_id = 0;
+
 	/* Init mutexes */
 	pthread_mutex_init(&mutex_adminp, NULL);
 	pthread_mutex_init(&mutex_timeoffset, NULL);
+	pthread_mutex_init(&mutex_master_params, NULL);
 	
 	pthread_t threads[3];
 
@@ -91,28 +97,29 @@ int main (int argc, char *argv[])
 		np_array[i].family = np.family;
 		strcpy(np_array[i].ipstr, np.ipstr);
 	}
-	
+	/*
 	if(pthread_create(
 			&threads[0], NULL, 
 			temperature_thread_entry, (void *) &np_array[0])) {
 		printf("Sensor thread creation failed! Programm will abort!\r\n");
 		exit(EXIT_FAILURE);
-	}
-	
-	/* Uncomment once ready */
-	/*
-	if(pthread_create(
-			&threads[1], NULL, 
-			data_network_thread_entry, (void *) &np_array[1])) {
-		printf("Data network thread creation failed! Programm will abort!\r\n");
-		exit(EXIT_FAILURE);
-	}
-
+	}*/
 	
 	if(pthread_create(
 			&threads[2], NULL, 
 			admin_network_thread_entry, (void *) &np_array[2])) {
 		printf("Admin network thread creation failed! Programm will abort!\r\n");
+		exit(EXIT_FAILURE);
+	}
+	
+
+	/* Uncomment once ready */
+	/*
+	
+if(pthread_create(
+			&threads[1], NULL, 
+			data_network_thread_entry, (void *) &np_array[1])) {
+		printf("Data network thread creation failed! Programm will abort!\r\n");
 		exit(EXIT_FAILURE);
 	}*/
 	

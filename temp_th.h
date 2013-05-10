@@ -1,7 +1,7 @@
 #include "common.h"
 
-#ifndef _TEMP_TH_HEADER
-#define _TEMP_TH_HEADER
+#ifndef __TEMP_TH_HEADER
+#define __TEMP_TH_HEADER
 
 #define SENSOR_SLEEP_INTERVAL 15
 
