@@ -196,14 +196,21 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		}
 	}
 
-	if (np->net_mode == USER_PROVIDED_IP || socket_type == CONTROL_LISTEN) {
+	if (np->net_mode == USER_PROVIDED_IP || 
+	    socket_type == CONTROL_LISTEN ||
+	    socket_type == DATA_LISTEN) {
 		if (bind(sockfd, host_res->ai_addr, host_res->ai_addrlen) == -1) {
 			perror("client: bind");
 			return -1;
 		}
 	}
 
-
+	if (socket_type == DATA_LISTEN) {
+		if (listen(sockfd, CONN_BACKLOG) == -1) {
+		    perror("listen");
+		    exit(1);
+		}
+	}
 
 	/**
      * Print informations about local socket.
@@ -222,7 +229,7 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 	inet_ntop(host_res->ai_family, host_addr, host_ipstr, sizeof host_ipstr);
 	printf("[Common] Host ver %s Host addr: %s:%d\r\n", ipver, host_ipstr, ntohs(host_port));
 
-	if(socket_type == CONTROL_LISTEN) {
+	if(socket_type == CONTROL_LISTEN || socket_type == DATA_LISTEN) {
 		freeaddrinfo(host_res);
 		return sockfd;
 	}
@@ -269,4 +276,13 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 	freeaddrinfo(host_res);
 		
 	return sockfd;
+}
+
+void *get_in_addr(struct sockaddr *sa)
+{
+    if (sa->sa_family == AF_INET) {
+        return &(((struct sockaddr_in*)sa)->sin_addr);
+    }
+
+    return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }

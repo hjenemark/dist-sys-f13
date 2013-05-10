@@ -8,6 +8,6 @@
 
 void *admin_network_thread_entry(void *np);
 void recurse_worker(int32_t socket);
-void *get_in_addr(struct sockaddr *sa);
+
 
 #endif

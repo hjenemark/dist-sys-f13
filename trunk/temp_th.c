@@ -11,7 +11,12 @@ void *temperature_thread_entry(void *np)
 	while (1) {
 		temperature = get_temperature();
 		get_admin_params(&admin_addr);
-		send_temperature((struct network_params *)np, &admin_addr, temperature);		
+		if (!admin_addr.ipstr) {
+			send_temperature((struct network_params *)np,
+			             	  &admin_addr, temperature);
+		} else {
+			printf("[Temp] Admin address not know yet!\r\n");
+		}
 		sleep(SENSOR_SLEEP_INTERVAL);
 	}
 }
