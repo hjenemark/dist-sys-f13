@@ -56,26 +56,71 @@ void recurse_worker(int32_t socket)
 		sleep(ADMIN_SLEEP_INTERVAL);
 	} else {
 		/* Node is slave */
+		struct timeval tv;
+		fd_set readfds;
 
-		socklen_t addr_len;
-		struct sockaddr_storage their_addr;
-		addr_len = sizeof their_addr;
-		int numbytes;
+		tv.tv_sec = ADMIN_SLEEP_INTERVAL;
+		tv.tv_usec = 0;
+
+		FD_ZERO(&readfds);
+		FD_SET(socket, &readfds);
+
+		select(socket+1, &readfds, NULL, NULL, &tv);
+
+		if(FD_ISSET(socket, &readfds)) {
+			/* Some data received */
+			socklen_t addr_len;
+			struct sockaddr_storage their_addr;
+			addr_len = sizeof their_addr;
+			int numbytes;
+			char s[INET6_ADDRSTRLEN];
 		
-		char buf[100];
+			char buf[100];
 		
-		if ((numbytes = recvfrom(socket, buf, 100-1 , 0,
-        (struct sockaddr *)&their_addr, &addr_len)) == -1) {
-   			perror("recvfrom");
-    		exit(1);
+			if ((numbytes = recvfrom(socket, buf, 100-1 , 0,
+		    (struct sockaddr *)&their_addr, &addr_len)) == -1) {
+	   			perror("recvfrom");
+				exit(1);
+			}
+
+			printf("[Admin]: got packet from %s\n",
+    			inet_ntop(their_addr.ss_family,
+        		get_in_addr((struct sockaddr *)&their_addr),
+        		s, sizeof s));
+
+			node_msg* rx_msg;
+			rx_msg = deserialize(buf);
+			print_node_list_msg(rx_msg);
+			while(rx_msg != NULL) {
+				switch(rx_msg->operation) {
+					case ANNOUNCE_MASTER:
+						pthread_mutex_lock (&mutex_adminp);
+						strcpy(admin_net_params.ipstr, s);
+						admin_net_params.family=their_addr.ss_family;
+						pthread_mutex_unlock (&mutex_adminp);
+						printf("[Admin]: New master announcement:  %s\n", s);
+						break;
+					case PROMO_KEY:
+						pthread_mutex_lock (&mutex_adminp);
+						current_master_id=atoi(rx_msg->operand);
+						pthread_mutex_unlock (&mutex_adminp);
+						printf("[Admin]: New master id:  %d\n", 
+						   	 atoi(rx_msg->operand));
+						break;
+				}
+				rx_msg = rx_msg->next;
+			}
+			
 		}
-
-		printf("listener: packet is %d bytes long\n", numbytes);
-		buf[numbytes] = '\0';
-		printf("listener: packet contains \"%s\"\n", buf);
-
-		sleep(ADMIN_SLEEP_INTERVAL);
 	}
-
 	recurse_worker (socket);
+}
+
+void *get_in_addr(struct sockaddr *sa)
+{
+    if (sa->sa_family == AF_INET) {
+        return &(((struct sockaddr_in*)sa)->sin_addr);
+    }
+
+    return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
