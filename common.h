@@ -30,6 +30,8 @@
 #define DATA_PORT 51001
 #define ADMIN_PORT 51002
 
+#define CONN_BACKLOG 100
+
 #define CONTROL_LISTEN 1
 #define DATA_LISTEN 2
 #define DATA_SUBMIT 3
@@ -96,4 +98,6 @@ void* decode_message( char* message);
  **/
 int get_socket(struct network_params *np, struct peer_net_params *pnp, 
                int socket_type);
+
+void *get_in_addr(struct sockaddr *sa);
 #endif
