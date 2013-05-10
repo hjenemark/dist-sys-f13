@@ -20,8 +20,8 @@
 #include "msg_list.h"
 #include "sens_list.h"
 
-#ifndef _COMMON_HEADER
-#define _COMMON_HEADER
+#ifndef __COMMON_HEADER
+#define __COMMON_HEADER
 
 #define USER_PROVIDED_IP 1
 #define OS_PROVIDED_IP 0
@@ -46,6 +46,10 @@
 
 struct peer_net_params admin_net_params; /*!< IP Params of admin node */
 pthread_mutex_t mutex_adminp; /*!< Mutex to protect admin net params */
+
+int32_t node_is_master;
+int32_t current_master_id;
+pthread_mutex_t mutex_master_params;
 
 int32_t node_admin_offset;
 pthread_mutex_t mutex_timeoffset;

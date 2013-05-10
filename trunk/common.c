@@ -142,12 +142,12 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 	if (np->net_mode == USER_PROVIDED_IP) {
 		host_hints.ai_family = pnp->family;
 		host_hints.ai_socktype = SOCK_STREAM;
-		node = np->ipstr;
+		node = np->ipstr; //TODO Fix this
 	} else {
 		host_hints.ai_family = pnp->family;
 		host_hints.ai_socktype = SOCK_STREAM;
 		host_hints.ai_flags = AI_PASSIVE;
-		node = pnp->ipstr;
+		node = NULL;
 	}
 
 	/**
@@ -156,14 +156,16 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 	switch (socket_type) {
 		case CONTROL_LISTEN:
 			sprintf(port_str, "%d", ADMIN_PORT);
-			host_hints.ai_socktype = SOCK_STREAM;			
+			sprintf(peer_port_str, "%d", ADMIN_PORT);
+			host_hints.ai_socktype = SOCK_DGRAM;			
 			break;
 		case DATA_LISTEN:
 			sprintf(port_str, "%d", DATA_PORT);
 			host_hints.ai_socktype = SOCK_STREAM;			
 			break;
 		case DATA_SUBMIT:
-			port_str = NULL;
+			//port_str = NULL;
+			sprintf(port_str, "%d", 0);
 			sprintf(peer_port_str, "%d", DATA_PORT);
 			host_hints.ai_socktype = SOCK_STREAM;			
 			break;
@@ -182,12 +184,26 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		return -1;
 	}
 
-	if (np->net_mode == USER_PROVIDED_IP) {
+	/**
+	 * Make socket broadcast
+	 */
+	int broadcast = 1;
+	if(socket_type == CONTROL_LISTEN) {
+		if (setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &broadcast,
+		    sizeof broadcast) == -1) {
+		    perror("setsockopt (SO_BROADCAST)");
+		    exit(1);
+		}
+	}
+
+	if (np->net_mode == USER_PROVIDED_IP || socket_type == CONTROL_LISTEN) {
 		if (bind(sockfd, host_res->ai_addr, host_res->ai_addrlen) == -1) {
 			perror("client: bind");
 			return -1;
 		}
 	}
+
+
 
 	/**
      * Print informations about local socket.
@@ -206,6 +222,11 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 	inet_ntop(host_res->ai_family, host_addr, host_ipstr, sizeof host_ipstr);
 	printf("[Common] Host ver %s Host addr: %s:%d\r\n", ipver, host_ipstr, ntohs(host_port));
 
+	if(socket_type == CONTROL_LISTEN) {
+		freeaddrinfo(host_res);
+		return sockfd;
+	}
+	
 	/**
      * Populates hints for remote connection.
     */
