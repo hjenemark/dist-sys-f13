@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
-#include <math.h>
 
 #include "msg_list.h"
 
@@ -101,16 +100,6 @@ node_msg* deserialize(char* data){
 
         t_op_size = (uint32_t)atoi(temp_char);
 
-        /*for(i = 3; i >=0; i--){
-            t_operation += (uint32_t)pow((double)10, (double) i) * (uint32_t)(data[marker] - '0');
-            marker += 1;
-        }
-        for(i = 3; i >=0; i--){
-            t_op_size += (uint32_t)pow((double)10, (double) i) * (uint32_t)(data[marker] - '0');
-            marker += 1;
-        }*/
-
-        //t_operand = (char*)calloc(sizeof(char), t_op_size);
         t_operand = (char*)calloc(t_op_size+1, sizeof(char));
         strncpy(t_operand, &data[marker], t_op_size);
         marker += t_op_size;
