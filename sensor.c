@@ -104,24 +104,24 @@ int main (int argc, char *argv[])
 		printf("Sensor thread creation failed! Programm will abort!\r\n");
 		exit(EXIT_FAILURE);
 	}*/
-	
+	/*
 	if(pthread_create(
 			&threads[2], NULL, 
 			admin_network_thread_entry, (void *) &np_array[2])) {
 		printf("Admin network thread creation failed! Programm will abort!\r\n");
 		exit(EXIT_FAILURE);
 	}
-	
+	*/
 
 	/* Uncomment once ready */
-	/*
+	/**/
 	
-if(pthread_create(
+	if(pthread_create(
 			&threads[1], NULL, 
 			data_network_thread_entry, (void *) &np_array[1])) {
 		printf("Data network thread creation failed! Programm will abort!\r\n");
 		exit(EXIT_FAILURE);
-	}*/
+	}
 	
 	/* Loop while sensor is alive */
 	while (1) {
