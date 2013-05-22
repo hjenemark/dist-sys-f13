@@ -10,7 +10,7 @@
  *
  * \param np A struct holding local network parameters.
  **/
-void *temperature_thread_entry(void *np);
+void *temperature_thread_entry();
 
 /** 
  * \brief Reads temperature of sensor. Random number based.
@@ -28,8 +28,7 @@ int8_t get_temperature();
  *
  * \param temperature An integer storing temperature.
  **/
-void send_temperature(struct network_params *np, struct peer_net_params *pnp,
-		      int8_t temperature);
+void send_temperature(struct peer_net_params *pnp, int8_t temperature);
 
 /** 
  * \brief Get current admin node network parameters.
@@ -44,7 +43,7 @@ int8_t get_admin_params(struct peer_net_params *pnp);
 /** 
  * \brief Get current admin node to sensor time offset.
  * 
- * \return 0: on success.
+ * \return time offset.
  **/
 int32_t get_time_offset();
 

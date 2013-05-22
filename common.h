@@ -20,6 +20,7 @@
 
 #include "msg_list.h"
 #include "sens_list.h"
+#include "sense_db.h"
 
 #ifndef __COMMON_HEADER
 #define __COMMON_HEADER
@@ -37,25 +38,16 @@
 #define DATA_SUBMIT 3
 
 #define GET_TEMPERATURE 1
-#define REPORT_TEMPERATURE 2
-#define ANNOUNCE_MASTER 3
+#define REPORT_TEMPERATURE 2 /* Temperature value of sensor */
+#define ANNOUNCE_MASTER 3 /* Broadcast by master node indicating master */
 #define TIME_REQUEST 4
 #define TIME_REPLY 5
-#define PROMOTE_TO_MASTER 6
-#define PROMO_KEY 7
-#define TEMP_TIMESTAMP 8
-#define GET_AVG_TEMP 9
-#define REPORT_AVG_TEMP 10
+#define PROMOTE_TO_MASTER 6 /* Message by user to become a master */
+#define PROMO_KEY 7 /* Promotion key of current message */
+#define TEMP_TIMESTAMP 8 /* Message containing timestamp */
+#define GET_AVG_TEMP 9 /* Request by user to get avg temperature */
+#define REPORT_AVG_TEMP 10 /* Reply of admin node with average temperature */
 
-struct peer_net_params admin_net_params; /*!< IP Params of admin node */
-pthread_mutex_t mutex_adminp; /*!< Mutex to protect admin net params */
-
-int32_t node_is_master;
-int32_t current_master_id;
-pthread_mutex_t mutex_master_params;
-
-int32_t node_admin_offset;
-pthread_mutex_t mutex_timeoffset;
 
 /** \struct network_params
  *
