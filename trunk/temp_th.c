@@ -2,8 +2,9 @@
  * \file temp_th.c
  **/
 #include "temp_th.h"
+#include "globals.h"
 
-void *temperature_thread_entry(void *np)
+void *temperature_thread_entry()
 {
 	int8_t temperature;
 	struct peer_net_params admin_addr;
@@ -12,8 +13,7 @@ void *temperature_thread_entry(void *np)
 		temperature = get_temperature();
 		get_admin_params(&admin_addr);
 		if (!admin_addr.ipstr) {
-			send_temperature((struct network_params *)np,
-			             	  &admin_addr, temperature);
+			send_temperature(&admin_addr, temperature);
 		} else {
 			printf("[Temp] Admin address not know yet!\r\n");
 		}
@@ -32,6 +32,7 @@ int8_t get_admin_params(struct peer_net_params *pnp)
 	pthread_mutex_lock (&mutex_adminp);
 	pnp->family = admin_net_params.family;
 	strcpy(pnp->ipstr, admin_net_params.ipstr);
+	printf("[Temp]DEBUG: Admin IP:%s\r\n", pnp->ipstr);
 	pthread_mutex_unlock (&mutex_adminp);
 	return 0;
 }
@@ -45,8 +46,7 @@ int32_t get_time_offset()
 	return timeoffset;
 }
 
-void send_temperature(struct network_params *np, struct peer_net_params *pnp,
-		      int8_t temperature)
+void send_temperature(struct peer_net_params *pnp,int8_t temperature)
 {
 	/* Status output for loging and debug */
 	printf("[Temp] Sending temperature \"%d\" to server \"%s\".\r\n", 
@@ -71,7 +71,7 @@ void send_temperature(struct network_params *np, struct peer_net_params *pnp,
 	msg = serilization(node_msg);
 	int32_t len = strlen(msg);
 
-	sockfd = get_socket(np, pnp, DATA_SUBMIT);
+	sockfd = get_socket(&np, pnp, DATA_SUBMIT);
 	send(sockfd, msg, len, 0);
 
 	close(sockfd);

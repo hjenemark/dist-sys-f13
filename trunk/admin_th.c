@@ -1,18 +1,21 @@
 #include "common.h"
 #include "admin_th.h"
+#include "globals.h"
 
-void *admin_network_thread_entry(void *np)
+void *admin_network_thread_entry()
 {
-	/* */
 	printf("[Admin] Starting admin thread!\r\n");
 	int32_t socketfd;
 	struct peer_net_params pnp;
 	pnp.family = AF_INET;
 	strcpy(pnp.ipstr, "255.255.255.255");
 
-	socketfd = get_socket(np, &pnp, CONTROL_LISTEN);
+	socketfd = get_socket(&np, &pnp, CONTROL_LISTEN);
 
-	recurse_worker(socketfd);
+	while (1) {
+		recurse_worker(socketfd);
+		sleep(ADMIN_SLEEP_INTERVAL);
+	}
 
 	close(socketfd);
 	pthread_exit(NULL);
@@ -25,6 +28,8 @@ void recurse_worker(int32_t socket)
 	cpy_node_master = node_is_master;
 	cpy_node_masterid = current_master_id;
 	pthread_mutex_unlock (&mutex_master_params);
+
+	printf("[Admin]DEBUG: masterid: %d\r\n", cpy_node_masterid);
 
 	if (cpy_node_master) {
 		/* Node is master */
@@ -110,9 +115,7 @@ void recurse_worker(int32_t socket)
 				}
 				rx_msg = rx_msg->next;
 			}
-			
 		}
 	}
-	recurse_worker (socket);
 }
 

@@ -9,6 +9,7 @@ BIN = sensor user server
 SENOBJS = sensor.o temp_th.o admin_th.o data_th.o common.o sense_db.o sens_list.o msg_list.o
 SRVOBJS = server.o msg_list.o
 UIOBJS = user.o common.o msg_list.o
+PTOBJS = pthread.o
 
 all: user sensor server
 
