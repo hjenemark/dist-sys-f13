@@ -36,6 +36,9 @@ uint32_t append_temp_db(node_sens** list, int32_t temperature, int32_t timestamp
         add_node_sens(list, temperature, timestamp, node_addr);
     }
 
+
+    //print_node_list(*list);
+
     return 0;
 }
 
@@ -67,6 +70,8 @@ int32_t average_temp(node_sens* list){
     int32_t count = 0;
     int32_t sum = 0;
     node_sens* current = list;
+
+    //print_node_list(list);
 
     while(current != NULL){
         if(!value_expired(current->timestamp)){

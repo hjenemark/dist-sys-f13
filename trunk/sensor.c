@@ -96,12 +96,12 @@ int main (int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	
-	if(pthread_create(
+	/*if(pthread_create(
 			&threads[1], NULL, 
 			admin_network_thread_entry, NULL)) {
 		printf("Admin network thread creation failed! Programm will abort!\r\n");
 		exit(EXIT_FAILURE);
-	}
+	}*/
 		
 	if(pthread_create(
 			&threads[2], NULL, 
