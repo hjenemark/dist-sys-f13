@@ -8,7 +8,6 @@ struct context {
 
 node_sens temp_database;
 
-
 void *data_network_thread_entry()
 {
 	printf("[Data] Starting data thread!\r\n");
@@ -58,8 +57,8 @@ void report_average_temperature(int32_t socket)
 {
 	printf("[Admin] Average T requested!\r\n");
 
-	/* TODO: Fix this! */
-	int32_t temperature = 7;
+	int32_t temperature;
+	temperature = average_temp(&temp_database)
 	
 	char buffer[15];
 	int32_t buflen;
@@ -106,10 +105,12 @@ void become_master()
 
 void append_db_timestamp(node_sens* temp_database, struct temp_storage *temp_data, char *operand)
 {
+	printf ("[Data] Appending timestamp to temporary DB.\r\n");
 	int32_t timestamp;
 	timestamp = atoi(operand);
 	temp_data->timestamp = timestamp;
 	if(temp_data->temperature != 0) {
+		printf ("[Data] Appending temporary DB to master DB.\r\n");
 		append_temp_db(
 			&temp_database,
 		    temp_data->temperature,
@@ -121,11 +122,13 @@ void append_db_timestamp(node_sens* temp_database, struct temp_storage *temp_dat
 
 void append_db_data(node_sens* temp_database, struct temp_storage *temp_data, char *operand , struct sockaddr *node_addr)
 {
+	printf ("[Data] Appending temperature to temporary DB.\r\n");
 	int32_t temperature;
 	temperature = atoi(operand);
 	temp_data->temperature = temperature;
 	temp_data->node_addr = node_addr;
 	if(temp_data->timestamp !=0) {
+		printf ("[Data] Appending temporary DB to master DB.\r\n");
 		append_temp_db(
 			&temp_database,
 		    temp_data->temperature,
@@ -145,15 +148,20 @@ void *data_network_worker(void *con)
 	struct temp_storage temp_data;
 	char buff[256];
 	int rx_bytes;
+	
+	struct sockaddr_storage their_addr;
+	socklen_t their_len = sizeof their_addr;
+	getpeername(new_fd, (struct sockaddr*)&their_addr, &their_len);
+		
 	rx_bytes = recv(new_fd, buff, 256, 0);
 	printf("Received %d bytes: \"%s\".\r\n", rx_bytes, buff);
 	node_msg* rx_msg;
 	rx_msg = deserialize(buff);
-	print_node_list_msg(rx_msg);
+	//print_node_list_msg(rx_msg);
 	while(rx_msg != NULL) {
 		switch(rx_msg->operation) {
 			case REPORT_TEMPERATURE:
-				//append_db_data(&temp_database, &temp_data, rx_msg->operand, (struct sockaddr *)&their_addr);
+				append_db_data(&temp_database, &temp_data, rx_msg->operand, (struct sockaddr *)&their_addr);
 				break;
 			case TEMP_TIMESTAMP:
 				append_db_timestamp(&temp_database, &temp_data, rx_msg->operand);
