@@ -6,7 +6,7 @@ struct context {
 	struct network_params *np; 
 };
 
-node_sens temp_database;
+node_sens *temp_database;
 
 void *data_network_thread_entry()
 {
@@ -58,7 +58,8 @@ void report_average_temperature(int32_t socket)
 	printf("[Admin] Average T requested!\r\n");
 
 	int32_t temperature;
-	temperature = average_temp(&temp_database)
+	temperature = average_temp(temp_database);
+	printf("[Admin] Average T is %d!\r\n", temperature);
 	
 	char buffer[15];
 	int32_t buflen;
@@ -161,10 +162,10 @@ void *data_network_worker(void *con)
 	while(rx_msg != NULL) {
 		switch(rx_msg->operation) {
 			case REPORT_TEMPERATURE:
-				append_db_data(&temp_database, &temp_data, rx_msg->operand, (struct sockaddr *)&their_addr);
+				append_db_data(temp_database, &temp_data, rx_msg->operand, (struct sockaddr *)&their_addr);
 				break;
 			case TEMP_TIMESTAMP:
-				append_db_timestamp(&temp_database, &temp_data, rx_msg->operand);
+				append_db_timestamp(temp_database, &temp_data, rx_msg->operand);
 				break;
 			case PROMO_KEY:
 				update_promo_key(rx_msg->operand);	
