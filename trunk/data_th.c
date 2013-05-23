@@ -123,13 +123,19 @@ void append_db_timestamp(node_sens* temp_db_local, struct temp_storage *temp_dat
 	}
 }
 
-void append_db_data(node_sens* temp_db_local, struct temp_storage *temp_data, char *operand , struct sockaddr *node_addr)
+void append_db_data(node_sens* temp_db_local, struct temp_storage *temp_data, char *operand , struct sockaddr_storage *node_addr)
 {
 	printf ("[Data] Appending temperature to temporary DB.\r\n");
 	int32_t temperature;
 	temperature = atoi(operand);
 	temp_data->temperature = temperature;
 	temp_data->node_addr = node_addr;
+	/*
+		char ipstr[INET6_ADDRSTRLEN];
+		struct sockaddr_in *s = (struct sockaddr_in *)temp_data->node_addr;
+		inet_ntop(AF_INET, &s->sin_addr, ipstr, sizeof ipstr);
+		printf("[DEBUG!] TempDB: IP: %s\n\r", ipstr);
+	*/
 	if(temp_data->timestamp !=0) {
 		printf ("[Data] Appending temporary DB to master DB.\r\n");
 		append_temp_db(
@@ -156,16 +162,22 @@ void *data_network_worker(void *con)
 	struct sockaddr_storage their_addr;
 	socklen_t their_len = sizeof their_addr;
 	getpeername(new_fd, (struct sockaddr*)&their_addr, &their_len);
-		
+
 	rx_bytes = recv(new_fd, buff, 256, 0);
 	printf("Received %d bytes: \"%s\".\r\n", rx_bytes, buff);
+	/*
+			char ipstr[INET6_ADDRSTRLEN];
+			struct sockaddr_in *s = (struct sockaddr_in *)&their_addr;
+			inet_ntop(AF_INET, &s->sin_addr, ipstr, sizeof ipstr);
+			printf("[DEBUG!!] TempDB: IP: %s\n\r", ipstr);
+	*/
 	node_msg* rx_msg;
 	rx_msg = deserialize(buff);
 	//print_node_list_msg(rx_msg);
 	while(rx_msg != NULL) {
 		switch(rx_msg->operation) {
 			case REPORT_TEMPERATURE:
-				append_db_data(temp_database, &temp_data, rx_msg->operand, (struct sockaddr *)&their_addr);
+				append_db_data(temp_database, &temp_data, rx_msg->operand, &their_addr);
                                 //print_node_list(temp_database);
 				break;
 			case TEMP_TIMESTAMP:

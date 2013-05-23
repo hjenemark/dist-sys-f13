@@ -8,7 +8,7 @@
 
 #ifndef __SENSE_DB_H
 #define __SENSE_DB_H
-uint32_t append_temp_db(node_sens** list, int32_t temperature, int32_t timestamp, struct sockaddr *node_addr);
+uint32_t append_temp_db(node_sens** list, int32_t temperature, int32_t timestamp, struct sockaddr_storage *node_addr);
 bool value_expired(int32_t timestamp);
 
 int32_t average_temp(node_sens* list);
