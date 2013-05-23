@@ -8,9 +8,13 @@ void *admin_network_thread_entry()
 	int32_t socketfd;
 	struct peer_net_params pnp;
 	pnp.family = AF_INET;
-	strcpy(pnp.ipstr, "255.255.255.255");
+	strcpy(pnp.ipstr, "10.10.10.255");
+	struct network_params np1;
+	np1.net_mode = USER_PROVIDED_IP;
+	np1.family = AF_INET;
+	strcpy(np1.ipstr, "10.10.10.255");
 
-	socketfd = get_socket(&np, &pnp, CONTROL_LISTEN);
+	socketfd = get_socket(&np1, &pnp, CONTROL_LISTEN);
 
 	while (1) {
 		recurse_worker(socketfd);
@@ -37,6 +41,7 @@ void recurse_worker(int32_t socket)
 		char buffer[15];
 		struct node_message *node_msg = NULL;
 		struct addrinfo hints, *servinfo;
+		struct sockaddr_in their_addr;
 		
 		add_node_msg (&node_msg, ANNOUNCE_MASTER, 0, NULL);
 		buflen = snprintf(buffer, 15, "%d", cpy_node_masterid);
@@ -46,18 +51,30 @@ void recurse_worker(int32_t socket)
 		msg = serilization(node_msg);
 		int32_t len = strlen(msg);
 
-		memset(&hints, 0, sizeof hints);
+		/*memset(&hints, 0, sizeof hints);
 		hints.ai_family = AF_UNSPEC;
 		hints.ai_socktype = SOCK_DGRAM;
 		sprintf(port_str, "%d", ADMIN_PORT);
-		getaddrinfo("255.255.255.255", port_str, &hints, &servinfo);
+		getaddrinfo("255.255.255.255", port_str, &hints, &servinfo);*/
+		their_addr.sin_family = AF_INET;     // host byte order
+		their_addr.sin_port = htons(51002); // short, network byte order
+		struct hostent *he;
+		he=gethostbyname("10.10.10.255");
+		their_addr.sin_addr = *((struct in_addr *)he->h_addr);
+		memset(their_addr.sin_zero, '\0', sizeof their_addr.sin_zero);
 
-		if ((numbytes = sendto(socket, msg, len, 0,
+		if ((numbytes=sendto(socket, msg, len, 0,
+             (struct sockaddr *)&their_addr, sizeof their_addr)) == -1) {
+   			perror("sendto");
+    		exit(1);
+		}
+		
+		/*if ((numbytes = sendto(socket, msg, len, 0,
              servinfo->ai_addr, servinfo->ai_addrlen)) == -1) {
     			perror("admin-th: sendto");
     			exit(1);
-		}
-		printf("[Admin] Broadcast beacon sent!\r\n");
+		}*/
+		printf("[Admin] Broadcast beacon size %d sent!\r\n",numbytes);
 		sleep(ADMIN_SLEEP_INTERVAL);
 	} else {
 		/* Node is slave */

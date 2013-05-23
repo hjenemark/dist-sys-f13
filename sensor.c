@@ -88,25 +88,23 @@ int main (int argc, char *argv[])
 	pthread_mutex_init(&mutex_master_params, NULL);
 	
 	pthread_t threads[3];
-
-	/*
+	
 	if(pthread_create(
 			&threads[0], NULL, 
-			temperature_thread_entry, (void *) &np_array[0])) {
+			temperature_thread_entry, NULL)) {
 		printf("Sensor thread creation failed! Programm will abort!\r\n");
 		exit(EXIT_FAILURE);
 	}
 	
 	if(pthread_create(
-			&threads[2], NULL, 
-			admin_network_thread_entry, (void *) &np_array[2])) {
+			&threads[1], NULL, 
+			admin_network_thread_entry, NULL)) {
 		printf("Admin network thread creation failed! Programm will abort!\r\n");
 		exit(EXIT_FAILURE);
 	}
-	*/
-	
+		
 	if(pthread_create(
-			&threads[1], NULL, 
+			&threads[2], NULL, 
 			data_network_thread_entry, NULL)) {
 		printf("Data network thread creation failed! Programm will abort!\r\n");
 		exit(EXIT_FAILURE);

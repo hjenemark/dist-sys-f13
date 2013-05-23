@@ -13,7 +13,7 @@ void *data_network_worker(void *con);
 void *data_network_thread_entry();
 void report_average_temperature(int32_t socket);
 void update_promo_key(char *keydata);
-void become_master(struct network_params *np);
+void become_master();
 void append_db_timestamp(
 	node_sens* temp_database, struct temp_storage* temp_storage, char *operand);
 void append_db_data(
