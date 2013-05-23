@@ -8,11 +8,12 @@ void *temperature_thread_entry()
 {
 	int8_t temperature;
 	struct peer_net_params admin_addr;
+	admin_addr.ipstr[0] = '\0';
 
 	while (1) {
 		temperature = get_temperature();
 		get_admin_params(&admin_addr);
-		if (!admin_addr.ipstr) {
+		if (admin_addr.ipstr[0] != '\0') {
 			send_temperature(&admin_addr, temperature);
 		} else {
 			printf("[Temp] Admin address not know yet!\r\n");

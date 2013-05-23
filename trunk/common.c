@@ -187,11 +187,16 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 	/**
 	 * Make socket broadcast
 	 */
-	int broadcast = 1;
+	int yes = 1;
 	if(socket_type == CONTROL_LISTEN) {
-		if (setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &broadcast,
-		    sizeof broadcast) == -1) {
+		if (setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &yes,
+		    sizeof yes) == -1) {
 		    perror("setsockopt (SO_BROADCAST)");
+		    exit(1);
+		}
+		
+		if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+		    perror("setsockopt (SO_REUSEADDR)");
 		    exit(1);
 		}
 	}

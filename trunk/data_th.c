@@ -88,17 +88,17 @@ void update_promo_key(char *keydata)
 	pthread_mutex_unlock (&mutex_master_params);
 }
 
-void become_master(struct network_params *np)
+void become_master()
 {
 	printf("[Data] Node promoted to be master!\r\n");
 	pthread_mutex_lock (&mutex_master_params);
 	pthread_mutex_lock (&mutex_adminp);
 
 	node_is_master = 1;
-	if(np->net_mode == OS_PROVIDED_IP) 
+	if(np.net_mode == OS_PROVIDED_IP) 
 		strcpy(admin_net_params.ipstr, "127.0.0.1");
 	else
-		strcpy(admin_net_params.ipstr, np->ipstr);
+		strcpy(admin_net_params.ipstr, np.ipstr);
 	
 	pthread_mutex_unlock (&mutex_master_params);
 	pthread_mutex_unlock (&mutex_adminp);
@@ -162,7 +162,7 @@ void *data_network_worker(void *con)
 				update_promo_key(rx_msg->operand);	
 				break;
 			case PROMOTE_TO_MASTER:
-				//become_master(np);
+				become_master();
 				break;
 			case GET_AVG_TEMP:
 				report_average_temperature (new_fd);
