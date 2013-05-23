@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -74,6 +75,12 @@ int32_t average_temp(node_sens* list){
         }
         current = current->next;
     }
-	if (count == 0) return 0;
-	else return (int32_t)sum/count;
+	if (count == 0) {
+		printf("[DEBUG] DB Empty\r\n");
+		return 0;
+	}
+	else {
+		printf("[DEBUG] Returning temerature\r\n");
+		return (int32_t)sum/count;
+	}
 }
