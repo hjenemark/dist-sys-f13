@@ -12,8 +12,16 @@
 #include "sense_db.h"
 
 //uint32_t append_temp_db(node_sens** list, char* node_id, time_t timestamp, int32_t sens_value){
-uint32_t append_temp_db(node_sens** list, int32_t temperature, int32_t timestamp, struct sockaddr *node_addr){
-    node_sens* current = *list;
+uint32_t append_temp_db(node_sens** list, int32_t temperature, int32_t timestamp, struct sockaddr_storage *node_addr){
+	printf("[DEBUG]Request to add:\r\n");
+	printf("[DEBUG]Temerature:%d\r\n", temperature);
+	printf("[DEBUG]Timestamp:%d\r\n", timestamp);
+	char ipstr[INET6_ADDRSTRLEN];
+	struct sockaddr_in *s = (struct sockaddr_in *)node_addr;
+    inet_ntop(AF_INET, &s->sin_addr, ipstr, sizeof ipstr);
+	printf("[DEBUG]Sensor IP address: %s\n", ipstr);
+
+	node_sens* current = *list;
     bool not_found = true;
     struct sockaddr_in *current_addr, *new_addr;
     new_addr = (struct sockaddr_in*)node_addr;
