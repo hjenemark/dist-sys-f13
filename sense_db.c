@@ -74,5 +74,6 @@ int32_t average_temp(node_sens* list){
         }
         current = current->next;
     }
-    return (int32_t)sum/count;
+	if (count == 0) return 0;
+	else return (int32_t)sum/count;
 }
