@@ -112,7 +112,7 @@ void recurse_worker(int32_t socket)
 			/* Preprate temporaty variables */
 			char temp_ip[INET6_ADDRSTRLEN];
 			temp_ip[0]='0';
-			int32_t temp_master_id=-1;
+			int32_t temp_master_id=0;
 			int32_t temp_af_family;
 
 			/* Receive data from socket */
@@ -156,8 +156,14 @@ void recurse_worker(int32_t socket)
 					case PROMO_KEY:
 						printf("[Admin]: New master ID announcement:  %d\n", atoi(rx_msg->operand));
 						/* Check if received id is higher than curent */
+						printf("[Admin] Master id curr: %d rxd: %d\r\n", current_master_id, atoi(rx_msg->operand) );
 						if (current_master_id < atoi(rx_msg->operand))
-							temp_master_id= atoi(rx_msg->operand);
+							temp_master_id = atoi(rx_msg->operand);
+						else {
+							printf("[Admin] Not updating master id.\r\n");
+							temp_master_id = 0;
+							temp_ip[0] = '0';
+						}
 						if(temp_ip[0] != '0') {
 							/* Master announcement is valid - save it */
 							printf("[Admin] New valid master announcment!\r\n");
