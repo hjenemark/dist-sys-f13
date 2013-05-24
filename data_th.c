@@ -6,7 +6,7 @@ struct context {
 	struct network_params *np; 
 };
 
-node_sens *temp_database;
+node_sens *temp_database = NULL;
 
 void *data_network_thread_entry()
 {
@@ -59,7 +59,8 @@ void report_average_temperature(int32_t socket)
 
 	int32_t temperature;
 	temperature = average_temp(temp_database);
-        //print_node_list(temp_database);
+        printf("[DEBUG] report_average_temperature - print list\r\n");
+        print_node_list(temp_database);
 
 	printf("[Admin] Average T is %d!\r\n", temperature);
 	
@@ -106,7 +107,7 @@ void become_master()
 	pthread_mutex_unlock (&mutex_adminp);
 }
 
-void append_db_timestamp(node_sens* temp_db_local, struct temp_storage *temp_data, char *operand)
+void append_db_timestamp(struct temp_storage *temp_data, char *operand)
 {
 	printf ("[Data] Appending timestamp to temporary DB.\r\n");
 	int32_t timestamp;
@@ -115,15 +116,18 @@ void append_db_timestamp(node_sens* temp_db_local, struct temp_storage *temp_dat
 	if(temp_data->temperature != 0) {
 		printf ("[Data] Appending temporary DB to master DB.\r\n");
 		append_temp_db(
-			&temp_db_local,
+			&temp_database,
 		    temp_data->temperature,
 		    temp_data->timestamp,
 		    temp_data->node_addr);
 		memset(temp_data, '\0', sizeof(struct temp_storage));
 	}
+        //printf("[DEBUG] append_db_timestamp - print list\r\n");
+        //print_node_list(temp_database);
+
 }
 
-void append_db_data(node_sens* temp_db_local, struct temp_storage *temp_data, char *operand , struct sockaddr_storage *node_addr)
+void append_db_data(struct temp_storage *temp_data, char *operand , struct sockaddr_storage *node_addr)
 {
 	printf ("[Data] Appending temperature to temporary DB.\r\n");
 	int32_t temperature;
@@ -139,13 +143,14 @@ void append_db_data(node_sens* temp_db_local, struct temp_storage *temp_data, ch
 	if(temp_data->timestamp !=0) {
 		printf ("[Data] Appending temporary DB to master DB.\r\n");
 		append_temp_db(
-			&temp_db_local,
+			&temp_database,
 		    temp_data->temperature,
 		    temp_data->timestamp,
 		    temp_data->node_addr);
-                //print_node_list(temp_db_local);
 		memset(temp_data, '\0', sizeof(struct temp_storage));
 	}
+        //printf("[DEBUG] append_db_data - print list\r\n");
+        //print_node_list(temp_database);
 }
 
 void *data_network_worker(void *con)
@@ -177,11 +182,12 @@ void *data_network_worker(void *con)
 	while(rx_msg != NULL) {
 		switch(rx_msg->operation) {
 			case REPORT_TEMPERATURE:
-				append_db_data(temp_database, &temp_data, rx_msg->operand, &their_addr);
+				//append_db_data(temp_database, &temp_data, rx_msg->operand, &their_addr);
+				append_db_data(&temp_data, rx_msg->operand, &their_addr);
                                 //print_node_list(temp_database);
 				break;
 			case TEMP_TIMESTAMP:
-				append_db_timestamp(temp_database, &temp_data, rx_msg->operand);
+				append_db_timestamp(&temp_data, rx_msg->operand);
 				break;
 			case PROMO_KEY:
 				update_promo_key(rx_msg->operand);	

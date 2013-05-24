@@ -12,6 +12,6 @@ uint32_t append_temp_db(node_sens** list, int32_t temperature, int32_t timestamp
 bool value_expired(int32_t timestamp);
 
 int32_t average_temp(node_sens* list);
-bool compare_addr(struct sockaddr_in* current, struct sockaddr_in* new);
+bool compare_addr(struct sockaddr_storage* current, struct sockaddr_storage* new);
 
 #endif
