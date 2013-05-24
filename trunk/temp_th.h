@@ -1,3 +1,7 @@
+/**
+ * \file temp_th.h
+ * Headerfile for temp_th.c
+ **/
 #include "common.h"
 
 #ifndef __TEMP_TH_HEADER

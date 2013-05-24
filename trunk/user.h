@@ -1,5 +1,6 @@
 /**
  * \file user.h
+ * Headerfile for user.c
  **/
 #include "common.h"
 

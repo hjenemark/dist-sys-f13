@@ -1,18 +1,29 @@
+/**
+ * \file admin_th.c
+ *
+ * Worker functions for the admin thread
+ **/
+
 #include "common.h"
 #include "admin_th.h"
 #include "globals.h"
 
+/**
+ * \brief Admin thread main function
+ **/
 void *admin_network_thread_entry()
 {
 	printf("[Admin] Starting admin thread!\r\n");
 	int32_t socketfd;
 	struct peer_net_params pnp;
 	pnp.family = AF_INET;
-	strcpy(pnp.ipstr, "10.10.10.255");
+	//strcpy(pnp.ipstr, "10.10.10.255");
+	strcpy(pnp.ipstr, "255.255.255.255");
 	struct network_params np1;
 	np1.net_mode = USER_PROVIDED_IP;
 	np1.family = AF_INET;
-	strcpy(np1.ipstr, "10.10.10.255");
+	//strcpy(np1.ipstr, "10.10.10.255");
+	strcpy(np1.ipstr, "255.255.255.255");
 
 	socketfd = get_socket(&np1, &pnp, CONTROL_LISTEN);
 
@@ -25,6 +36,12 @@ void *admin_network_thread_entry()
 	pthread_exit(NULL);
 }
 
+/**
+ * \brief Does the work of the admin thread.
+ *
+ * If the node is the admin a message is broadcast on the network.
+ * Otherwise it waits for the promote message.
+ **/
 void recurse_worker(int32_t socket)
 {
 	int32_t cpy_node_master, cpy_node_masterid;

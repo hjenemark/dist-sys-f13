@@ -1,7 +1,7 @@
 /**
  * \file sens_list.h
+ * Provides the functionality of a single linked list to organize temperature values
  */
-#include <time.h>
 #include <stdint.h>
 #include <netinet/in.h>
 
@@ -21,7 +21,7 @@
  **/
 #define TEMP_EXPIRED_TIME 300
 
-/**
+/** \struct node_sense_val
  * \brief Short description of a sensor node
  **/
 typedef struct node_sense_val{
@@ -46,23 +46,25 @@ typedef struct node_sense_val{
  *
  * \return 0: upon success, 1: if failed
  **/
-//int32_t add_node(void** list, int32_t (*populate)(void* node, ...), int32_t type, ...);
-//uint32_t add_node_sens(node_sens** list, int32_t sens_value, int32_t timestamp, struct sockaddr* node_addr);
 uint32_t add_node_sens(node_sens** list, int32_t sens_value, int32_t timestamp, struct sockaddr_storage* node_addr);
 
 
 /**
  * \brief Removes a node from the linked list
+ * \param list The list to remove a node from
+ * \param lnode The node to remove from the list
  **/
 uint32_t remove_node_sens(node_sens** list, node_sens* lnode);
 
 /**
  * \brief Clears an entire list of sensor values
+ * \param list The list to clear
  */
 uint32_t clear_list_sens(node_sens** list);
 
 /**
- * \brief Prints out the content of a list
+ * \brief Prints out the content of a list to stdout
+ * \param list The list to print 
  **/
 void print_node_list(node_sens* list);
 
