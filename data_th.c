@@ -5,11 +5,12 @@ struct context {
 	int32_t socket;
 	struct network_params *np; 
 };
-
+pthread_mutex_t database_access;
 node_sens *temp_database = NULL;
 
 void *data_network_thread_entry()
 {
+
 	printf("[Data] Starting data thread!\r\n");
 	int32_t socketfd, new_fd;
 	struct peer_net_params pnp;
@@ -17,6 +18,8 @@ void *data_network_thread_entry()
 	struct sockaddr_storage their_addr;
 	pnp.family = AF_INET;
 	char s[INET6_ADDRSTRLEN];
+
+	pthread_mutex_init(&database_access, NULL);
 
 	struct context con;
 	
@@ -115,11 +118,13 @@ void append_db_timestamp(struct temp_storage *temp_data, char *operand)
 	temp_data->timestamp = timestamp;
 	if(temp_data->temperature != 0) {
 		printf ("[Data] Appending temporary DB to master DB.\r\n");
+		pthread_mutex_lock (&database_access);
 		append_temp_db(
 			&temp_database,
 		    temp_data->temperature,
 		    temp_data->timestamp,
 		    temp_data->node_addr);
+		pthread_mutex_unlock (&database_access);
 		memset(temp_data, '\0', sizeof(struct temp_storage));
 	}
         //printf("[DEBUG] append_db_timestamp - print list\r\n");
@@ -142,11 +147,13 @@ void append_db_data(struct temp_storage *temp_data, char *operand , struct socka
 	*/
 	if(temp_data->timestamp !=0) {
 		printf ("[Data] Appending temporary DB to master DB.\r\n");
+		pthread_mutex_lock (&database_access);
 		append_temp_db(
 			&temp_database,
 		    temp_data->temperature,
 		    temp_data->timestamp,
 		    temp_data->node_addr);
+		pthread_mutex_unlock (&database_access);
 		memset(temp_data, '\0', sizeof(struct temp_storage));
 	}
         //printf("[DEBUG] append_db_data - print list\r\n");
