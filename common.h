@@ -49,7 +49,6 @@
 #define GET_AVG_TEMP 9 /* Request by user to get avg temperature */
 #define REPORT_AVG_TEMP 10 /* Reply of admin node with average temperature */
 
-
 /** \struct network_params
  *
  *	Structure to keep information about IP address that client will bind to.

@@ -12,3 +12,5 @@ extern int32_t node_admin_offset;
 extern pthread_mutex_t mutex_timeoffset;
 
 extern struct network_params np;
+
+extern bool running;

@@ -20,6 +20,7 @@ void *temperature_thread_entry()
 		}
 		sleep(SENSOR_SLEEP_INTERVAL);
 	}
+        pthread_exit(NULL);
 }
 
 /* TODO: Implement temperature reading */
