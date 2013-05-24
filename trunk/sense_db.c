@@ -23,12 +23,12 @@ uint32_t append_temp_db(node_sens** list, int32_t temperature, int32_t timestamp
 
 	node_sens* current = *list;
     bool not_found = true;
-    struct sockaddr_in *current_addr, *new_addr;
-    new_addr = (struct sockaddr_in*)node_addr;
+    struct sockaddr_storage *current_addr, *new_addr;
+    new_addr = node_addr;
 
     while(current != NULL){
 
-        current_addr = (struct sockaddr_in*)(current->node_addr);
+        current_addr = current->node_addr;
         if(value_expired(current->timestamp)){
             remove_node_sens(list, current);
         //}else if(strncmp(current->node_addr, node_addr, NODE_ID_LENGTH) == 0){
@@ -45,26 +45,41 @@ uint32_t append_temp_db(node_sens** list, int32_t temperature, int32_t timestamp
     }
 
 
-    //print_node_list(*list);
+    printf("[DEBUG] append_temp_db - print list\r\n");
+    print_node_list(*list);
 
     return 0;
 }
 
-bool compare_addr(struct sockaddr_in* current, struct sockaddr_in* new){
-    char* char_buff0 = (char*)malloc(sizeof(char)*(INET_ADDRSTRLEN + 1));
-    char* char_buff1 = (char*)malloc(sizeof(char)*(INET_ADDRSTRLEN + 1));
-    bool result = false;
-    if(strncmp(inet_ntop(AF_INET, &(current->sin_addr), char_buff0, INET_ADDRSTRLEN),
-                inet_ntop(AF_INET, &(new->sin_addr), char_buff1, INET_ADDRSTRLEN), INET_ADDRSTRLEN) == 0)
-    {
-        result = true;
-    } else {
-        result = false;
+bool compare_addr(struct sockaddr_storage* current, struct sockaddr_storage* new){
+    char *current_ip, *new_ip;
+    if(current->ss_family == AF_INET){
+        current_ip = (char*)malloc(sizeof(char)*INET_ADDRSTRLEN);
+        inet_ntop(AF_INET, 
+                &(((struct sockaddr_in*)current)->sin_addr), 
+                current_ip, INET_ADDRSTRLEN);
+    } else if(current->ss_family == AF_INET6){
+        current_ip = (char*)malloc(sizeof(char)*INET6_ADDRSTRLEN);
+        inet_ntop(AF_INET, 
+                &(((struct sockaddr_in6*)current)->sin6_addr), 
+                current_ip, INET6_ADDRSTRLEN);
     }
-    free(char_buff0);
-    free(char_buff1);
-    return result;
-
+    if(new->ss_family == AF_INET){
+        new_ip = (char*)malloc(sizeof(char)*INET_ADDRSTRLEN);
+        inet_ntop(AF_INET, 
+                &(((struct sockaddr_in*)new)->sin_addr), 
+                new_ip, INET_ADDRSTRLEN);
+    } else if(new->ss_family == AF_INET6){
+        new_ip = (char*)malloc(sizeof(char)*INET6_ADDRSTRLEN);
+        inet_ntop(AF_INET, 
+                &(((struct sockaddr_in6*)new)->sin6_addr), 
+                new_ip, INET6_ADDRSTRLEN);
+    }
+    if(strcmp(current_ip, new_ip) == 0){
+        return true;
+    } else {
+        return false;
+    }
 }
 bool value_expired(int32_t timestamp){
     if((time(NULL) - timestamp) > TEMP_EXPIRED_TIME){

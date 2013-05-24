@@ -40,7 +40,7 @@ uint32_t remove_node_sens(node_sens** list, node_sens* lnode){
 }
 
 uint32_t add_node_sens(node_sens** list, 
-        int32_t sens_value, int32_t timestamp, struct sockaddr* node_addr){
+        int32_t sens_value, int32_t timestamp, struct sockaddr_storage* node_addr){
     node_sens* newnode;
 
     newnode = (node_sens*)malloc(sizeof(node_sens));
@@ -59,8 +59,8 @@ uint32_t add_node_sens(node_sens** list,
     /**
      * Populates the new node.
     */
-    newnode->node_addr = (struct sockaddr*)malloc(sizeof(struct sockaddr));
-    memcpy(newnode->node_addr, node_addr, sizeof(struct sockaddr));
+    newnode->node_addr = (struct sockaddr_storage*)malloc(sizeof(struct sockaddr_storage));
+    memcpy(newnode->node_addr, node_addr, sizeof(struct sockaddr_storage));
     newnode->timestamp = timestamp;
     newnode->temp_val = sens_value;
     //printf("[adding] Node added with id: %s\n",(*list)->node_id);
@@ -71,16 +71,23 @@ uint32_t add_node_sens(node_sens** list,
 void print_node_list(node_sens* list){
     node_sens *current = list;
     char* char_buff = (char*)malloc(sizeof(char)*(INET_ADDRSTRLEN + 1));
-    memset(char_buff, '0', INET_ADDRSTRLEN + 1);
+    memset(char_buff, '\0', INET_ADDRSTRLEN + 1);
     struct sockaddr_in* ip4addr;
+    struct sockaddr_in6* ip6addr;
+
     //char* char_buff = (char*)malloc(sizeof(char)*INET_ADDRSTRLEN + 1);
     printf("[Printing list]\n");
     
 
     while(current != NULL){
         printf("- - -\n");
-        ip4addr = (struct sockaddr_in*) current->node_addr;
-        printf("- Node: %s\n", inet_ntop(AF_INET, &(ip4addr->sin_addr), char_buff, INET_ADDRSTRLEN));
+        if(current->node_addr->ss_family == AF_INET){
+            ip4addr = (struct sockaddr_in*) current->node_addr;
+            printf("- Node: %s\n", inet_ntop(AF_INET, &(ip4addr->sin_addr), char_buff, INET_ADDRSTRLEN));
+        } else if(current->node_addr->ss_family == AF_INET6){
+            ip6addr = (struct sockaddr_in6*) current->node_addr;
+            printf("- Node: %s\n", inet_ntop(AF_INET, &(ip6addr->sin6_addr), char_buff, INET6_ADDRSTRLEN));
+        }
         printf("- - Time: %d\n", current->timestamp);
         printf("- - Temp: %i\n", current->temp_val);
         printf("- - -\n");

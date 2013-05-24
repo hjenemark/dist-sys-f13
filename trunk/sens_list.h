@@ -25,7 +25,7 @@
  * \brief Short description of a sensor node
  **/
 typedef struct node_sense_val{
-    struct sockaddr* node_addr; /*!< Unique ID of the note. This could be the IP-address*/
+    struct sockaddr_storage* node_addr; /*!< Unique ID of the node*/
     int32_t timestamp; /*!< Timestamp from when the sensor value was captured */
     int32_t temp_val;  /*!< Sensor value */
 
@@ -47,7 +47,8 @@ typedef struct node_sense_val{
  * \return 0: upon success, 1: if failed
  **/
 //int32_t add_node(void** list, int32_t (*populate)(void* node, ...), int32_t type, ...);
-uint32_t add_node_sens(node_sens** list, int32_t sens_value, int32_t timestamp, struct sockaddr* node_addr);
+//uint32_t add_node_sens(node_sens** list, int32_t sens_value, int32_t timestamp, struct sockaddr* node_addr);
+uint32_t add_node_sens(node_sens** list, int32_t sens_value, int32_t timestamp, struct sockaddr_storage* node_addr);
 
 
 /**
