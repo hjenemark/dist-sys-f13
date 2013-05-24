@@ -139,7 +139,7 @@ void recurse_worker(int32_t socket)
 						printf("[Admin]: New master announcement:  %s\n", rx_msg->operand);
 						strncpy(temp_ip, rx_msg->operand, rx_msg->op_size);
 						temp_af_family = their_addr.ss_family;
-						if(temp_master_id != -1) {
+						if(temp_master_id != 0) {
 							/* Master announcement is valid - save it */
 							printf("[Admin] New valid master announcment!\r\n");
 							pthread_mutex_lock (&mutex_adminp);
@@ -147,7 +147,7 @@ void recurse_worker(int32_t socket)
 							strncpy(admin_net_params.ipstr, temp_ip, strlen(temp_ip));
 							current_master_id = temp_master_id;
 							pthread_mutex_unlock (&mutex_adminp);
-							temp_master_id=-1;
+							temp_master_id=0;
 							temp_ip[0] = '0';
 							/* New master found. Update time offset */
 							calculate_time_offset();
@@ -166,7 +166,7 @@ void recurse_worker(int32_t socket)
 							strncpy(admin_net_params.ipstr, temp_ip, strlen(temp_ip));
 							current_master_id = temp_master_id;
 							pthread_mutex_unlock (&mutex_adminp);
-							temp_master_id=-1;
+							temp_master_id=0;
 							temp_ip[0] = '0';
 							/* New master found. Update time offset */
 							calculate_time_offset();
