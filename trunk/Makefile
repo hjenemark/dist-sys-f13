@@ -5,13 +5,11 @@ CFLAGS = -Wall
 OFLAGS = -c
 LFLAGS = -lpthread -lm
 PROJ = sensor
-BIN = sensor user server
+BIN = sensor user 
 SENOBJS = sensor.o temp_th.o admin_th.o data_th.o common.o sense_db.o sens_list.o msg_list.o
-SRVOBJS = server.o msg_list.o
 UIOBJS = user.o common.o msg_list.o
-PTOBJS = pthread.o
 
-all: user sensor server
+all: user sensor
 
 # Target for user interface
 user: $(UIOBJS)
@@ -51,13 +49,6 @@ data_th.o: data_th.c data_th.h
 common.o: common.c common.h
 	$(CC) $(CFLAGS) $(OFLAGS) common.c -o common.o
 
-# Target for testing server
-server: $(SRVOBJS)
-	$(CC) $(CFLAGS) $(SRVOBJS) -o server $(LFLAGS)
-
-server.o: server.c
-	$(CC) $(CFLAGS) $(OFLAGS) server.c -o server.o
-
 memcheck: $(PROJ)
 	valgrind --leak-check=yes --track-origins=yes ./server
 	
@@ -75,6 +66,3 @@ clean:
 # They can be produced by this makefile on demand.
 dox:
 	doxygen distDoxy
-
-
-#	gcc -pthread -o sensor sensor.c temp_th.c admin_th.c data_th.c common.c

@@ -26,28 +26,28 @@
 #ifndef __COMMON_HEADER
 #define __COMMON_HEADER
 
-#define USER_PROVIDED_IP 1
-#define OS_PROVIDED_IP 0
+#define USER_PROVIDED_IP 1 /* User user provided IP */
+#define OS_PROVIDED_IP 0 /* User OS provided IP */
 
-#define DATA_PORT 51001
-#define ADMIN_PORT 51002
+#define DATA_PORT 51001 /* Port for unicast communication */
+#define ADMIN_PORT 51002 /* Port for multicast communication */
 
-#define CONN_BACKLOG 100
+#define CONN_BACKLOG 100 /* Number of connections held in backlog */
 
-#define CONTROL_LISTEN 1
-#define DATA_LISTEN 2
-#define DATA_SUBMIT 3
+#define CONTROL_LISTEN 1 /* Requested socket type */
+#define DATA_LISTEN 2 /* Requested socket type */
+#define DATA_SUBMIT 3 /* Requested socket type */
 
-#define GET_TEMPERATURE 1
-#define REPORT_TEMPERATURE 2 /* Temperature value of sensor */
-#define ANNOUNCE_MASTER 3 /* Broadcast by master node indicating master */
-#define TIME_REQUEST 4
-#define TIME_REPLY 5
-#define PROMOTE_TO_MASTER 6 /* Message by user to become a master */
-#define PROMO_KEY 7 /* Promotion key of current message */
-#define TEMP_TIMESTAMP 8 /* Message containing timestamp */
-#define GET_AVG_TEMP 9 /* Request by user to get avg temperature */
-#define REPORT_AVG_TEMP 10 /* Reply of admin node with average temperature */
+#define REPORT_TEMPERATURE 1 /* Temperature value of sensor */
+#define ANNOUNCE_MASTER 2 /* Broadcast by master node indicating master */
+#define PROMOTE_TO_MASTER 3 /* Message by user to become a master */
+#define PROMO_KEY 4 /* Promotion key of current message */
+#define TEMP_TIMESTAMP 5 /* Message containing timestamp */
+#define GET_AVG_TEMP 6 /* Request by user to get avg temperature */
+#define REPORT_AVG_TEMP 7 /* Reply of admin node with average temperature */
+#define REQ_TIME 8 /* Request to provide time values */
+#define TIME_REQ_RX 9 /* Time request received */
+#define TIME_REP_TX 10 /* Time reply sent */
 
 /** \struct network_params
  *
@@ -82,5 +82,12 @@ struct peer_net_params {
 int get_socket(struct network_params *np, struct peer_net_params *pnp, 
                int socket_type);
 
+/** 
+ * \brief Returns pointer to data skipping padding.
+ *
+ * \param sockaddr *sa A stuct hosling socket information
+ * 
+ * \return void* pointer to data in sockaddr structure after padding
+ **/
 void *get_in_addr(struct sockaddr *sa);
 #endif

@@ -121,6 +121,7 @@ void recurse_worker(int32_t socket)
 	   			perror("recvfrom");
 				exit(1);
 			}
+			buf[numbytes] = '\0';
 
 			printf("[Admin]: got packet from %s\n",
     			inet_ntop(their_addr.ss_family,
@@ -148,6 +149,8 @@ void recurse_worker(int32_t socket)
 							pthread_mutex_unlock (&mutex_adminp);
 							temp_master_id=-1;
 							temp_ip[0] = '0';
+							/* New master found. Update time offset */
+							calculate_time_offset();
 						}
 						break;
 					case PROMO_KEY:
@@ -165,6 +168,8 @@ void recurse_worker(int32_t socket)
 							pthread_mutex_unlock (&mutex_adminp);
 							temp_master_id=-1;
 							temp_ip[0] = '0';
+							/* New master found. Update time offset */
+							calculate_time_offset();
 						}
 						break;
 				}
@@ -172,5 +177,66 @@ void recurse_worker(int32_t socket)
 			}
 		}
 	}
+}
+
+void calculate_time_offset()
+{
+	printf("[Admin] Calculating time offset!\r\n");
+
+	// Time values for offset calculation
+	int32_t time_req_sent, time_req_rx, time_rep_sent, time_rep_rx;
+	
+	/* Create TLV requesting average temperature */
+	struct node_message* node_msg = NULL;
+	add_node_msg(&node_msg, REQ_TIME, 0, NULL);
+
+	/* Serialize TLV for sending */
+	char *msg=NULL;
+	msg = serilization(node_msg);
+	int32_t len = strlen(msg);
+
+	/* Create socket and send data */
+	int32_t socket;
+	socket = get_socket(&np, &admin_net_params, DATA_SUBMIT);
+	time_req_sent = time(0);
+	send(socket, msg, len, 0);
+
+	/* Receive a reply */
+	char buff[256];
+	int32_t rx_bytes;
+	if ((rx_bytes=recv(socket, buff, 256, 0))==0) {
+		printf("Remote end closed connection!\r\n");
+	}
+	time_rep_rx = time(0);
+	buff[rx_bytes] = '\0';
+	
+	/* Deserialize the data */
+	struct node_message* rx_msg;
+	rx_msg = deserialize(buff);
+
+	/* Find data containing time values */
+	while(rx_msg != NULL) {
+		switch(rx_msg->operation) {
+			case TIME_REQ_RX:
+				time_req_rx = atoi(rx_msg->operand);
+				break;
+			case TIME_REP_TX:
+				time_rep_sent = atoi(rx_msg->operand);
+				break;
+			default:
+				break;
+		}
+		rx_msg = rx_msg->next;
+	}
+
+	/* Calculate time offset */
+	int32_t timeoffset;
+	timeoffset=(int32_t)((time_req_rx-time_req_sent)+(time_rep_sent-time_rep_rx))/2;
+	printf("[Admin] Time offset is %d!\r\n", timeoffset);
+
+	/* Store time offset in global variable */
+	pthread_mutex_lock (&mutex_timeoffset);
+	node_admin_offset = timeoffset;
+	pthread_mutex_unlock (&mutex_timeoffset);
 }
 
