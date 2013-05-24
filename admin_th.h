@@ -31,4 +31,10 @@ void *admin_network_thread_entry();
  **/
 void recurse_worker(int32_t socket);
 
+/** 
+ * \brief Calculate time offset of local clock to master node clock and store in global.
+ *
+ * \return void
+ **/
+void calculate_time_offset();
 #endif

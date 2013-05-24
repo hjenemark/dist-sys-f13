@@ -1,17 +1,17 @@
+/**
+ * \file data_th.c
+ **/
+
 #include "data_th.h"
 #include "globals.h"
 
-struct context {
-	int32_t socket;
-	struct network_params *np; 
-};
-pthread_mutex_t database_access;
-node_sens *temp_database = NULL;
+pthread_mutex_t database_access; /* Mutex to controll DB access */
+node_sens *temp_database = NULL; /* Initialize Temperature Database */
 
 void *data_network_thread_entry()
 {
-
 	printf("[Data] Starting data thread!\r\n");
+	/* Prepare variables */
 	int32_t socketfd, new_fd;
 	struct peer_net_params pnp;
 	socklen_t sin_size;
@@ -19,14 +19,15 @@ void *data_network_thread_entry()
 	pnp.family = AF_INET;
 	char s[INET6_ADDRSTRLEN];
 
+	/* Initialize mutex */
 	pthread_mutex_init(&database_access, NULL);
 
-	struct context con;
-	
-
+	/* Create socket */
 	socketfd = get_socket(&np, &pnp, DATA_LISTEN);
 
-    while(1) {  // main accept() loop
+	/* Main work loop */
+    while(1) {
+		/* Accept connection */
         sin_size = sizeof their_addr;
         new_fd = accept(socketfd, (struct sockaddr *)&their_addr, &sin_size);
         if (new_fd == -1) {
@@ -39,18 +40,14 @@ void *data_network_thread_entry()
             s, sizeof s);
         printf("server: got connection from %s\n", s);
 
+		/* Create hread to handle connection */
 		pthread_t worker_thread;
-		con.socket = new_fd;
-		//con.np = np;
-
 		if(pthread_create(
 			&worker_thread, NULL, 
-			data_network_worker, (void *)&con)) {
+			data_network_worker, (void *)&new_fd)) {
 				printf("Worker thread creation failed!\r\n");
 				exit(EXIT_FAILURE);
 		}
-        
-
 	}
 	close(socketfd);
 	pthread_exit(NULL);
@@ -58,26 +55,27 @@ void *data_network_thread_entry()
 
 void report_average_temperature(int32_t socket)
 {
-	printf("[Admin] Average T requested!\r\n");
+	printf("[Data] Average T requested!\r\n");
 
+	/* Request temperature from database */
 	int32_t temperature;
 	temperature = average_temp(temp_database);
-        printf("[DEBUG] report_average_temperature - print list\r\n");
-        print_node_list(temp_database);
-
-	printf("[Admin] Average T is %d!\r\n", temperature);
+	printf("[Data] Average T is %d!\r\n", temperature);
 	
 	char buffer[15];
 	int32_t buflen;
 	buflen = snprintf(buffer, 15, "%d", temperature);
-	
+
+	/* Prepare message containing temperature */
 	struct node_message* reply_message = NULL;
 	add_node_msg (&reply_message, REPORT_AVG_TEMP, buflen, buffer);
 
+	/* Serialize the message */
 	char *reply_string=NULL;
 	reply_string = serilization (reply_message);
 	int32_t reply_len = strlen (reply_string);
 
+	/* Send the message */
 	send(socket, reply_string, reply_len, 0);
 }
 
@@ -85,9 +83,12 @@ void update_promo_key(char *keydata)
 {
 	printf("[Data] New PROMO key received!\r\n");
 	printf("[Data] Old PROMO key: %d \r\n", current_master_id);
+
+	/* Get key data */
 	int32_t new_key;
 	new_key = atoi(keydata);
 
+	/* Update key data */
 	pthread_mutex_lock (&mutex_master_params);
 	current_master_id = new_key;
 	printf("[Data] New PROMO is %d!\r\n", current_master_id);
@@ -100,12 +101,16 @@ void become_master()
 	pthread_mutex_lock (&mutex_master_params);
 	pthread_mutex_lock (&mutex_adminp);
 
+	/* Change node parameter to become master */
 	node_is_master = 1;
+
+	/* Update master node's IP address */
 	if(np.net_mode == OS_PROVIDED_IP) 
 		strcpy(admin_net_params.ipstr, "127.0.0.1");
 	else
 		strcpy(admin_net_params.ipstr, np.ipstr);
-	
+
+	/* Release mutexes after update */
 	pthread_mutex_unlock (&mutex_master_params);
 	pthread_mutex_unlock (&mutex_adminp);
 }
@@ -113,9 +118,12 @@ void become_master()
 void append_db_timestamp(struct temp_storage *temp_data, char *operand)
 {
 	printf ("[Data] Appending timestamp to temporary DB.\r\n");
+	/* Prepare variables */
 	int32_t timestamp;
 	timestamp = atoi(operand);
 	temp_data->timestamp = timestamp;
+	
+	/* If temporary data ready, append to master DB */
 	if(temp_data->temperature != 0) {
 		printf ("[Data] Appending temporary DB to master DB.\r\n");
 		pthread_mutex_lock (&database_access);
@@ -127,24 +135,19 @@ void append_db_timestamp(struct temp_storage *temp_data, char *operand)
 		pthread_mutex_unlock (&database_access);
 		memset(temp_data, '\0', sizeof(struct temp_storage));
 	}
-        //printf("[DEBUG] append_db_timestamp - print list\r\n");
-        //print_node_list(temp_database);
-
 }
 
 void append_db_data(struct temp_storage *temp_data, char *operand , struct sockaddr_storage *node_addr)
 {
 	printf ("[Data] Appending temperature to temporary DB.\r\n");
+
+	/* Prepare variables */
 	int32_t temperature;
 	temperature = atoi(operand);
 	temp_data->temperature = temperature;
 	temp_data->node_addr = node_addr;
-	/*
-		char ipstr[INET6_ADDRSTRLEN];
-		struct sockaddr_in *s = (struct sockaddr_in *)temp_data->node_addr;
-		inet_ntop(AF_INET, &s->sin_addr, ipstr, sizeof ipstr);
-		printf("[DEBUG!] TempDB: IP: %s\n\r", ipstr);
-	*/
+
+	/* If temporary data is ready append to master DB */
 	if(temp_data->timestamp !=0) {
 		printf ("[Data] Appending temporary DB to master DB.\r\n");
 		pthread_mutex_lock (&database_access);
@@ -156,42 +159,60 @@ void append_db_data(struct temp_storage *temp_data, char *operand , struct socka
 		pthread_mutex_unlock (&database_access);
 		memset(temp_data, '\0', sizeof(struct temp_storage));
 	}
-        //printf("[DEBUG] append_db_data - print list\r\n");
-        //print_node_list(temp_database);
 }
 
-void *data_network_worker(void *con)
+void report_time_values(int32_t socket, int32_t time_rx)
 {
-	//close(socketfd); // child doesn't need the listener
-	struct context *con1;
-	con1 = (struct context *)con;
-	int32_t new_fd;
-	new_fd = con1->socket;
+	printf("[Data] Timestamps requested!\r\n");
+
+	/* Prepare variables */
+	char buffer[15];
+	int32_t buflen, time_tx;
+	struct node_message* reply_message = NULL;
+
+	/* Append message with first timestamp */
+	buflen = snprintf(buffer, 15, "%d", time_rx);
+	add_node_msg (&reply_message, TIME_REQ_RX, buflen, buffer);
+
+	/* Append message with second timestamp */
+	time_tx = time(0);
+	buflen = snprintf(buffer, 15, "%d", time_tx);
+	add_node_msg (&reply_message, TIME_REP_TX, buflen, buffer);
+
+	/* Serialize the message */
+	char *reply_string=NULL;
+	reply_string = serilization (reply_message);
+	int32_t reply_len = strlen (reply_string);
+
+	/* Send the message */
+	send(socket, reply_string, reply_len, 0);
+}
+
+void *data_network_worker(void *sock)
+{
+	/* Prepare variables */
+	int32_t new_fd, rx_bytes, timerx;
+	new_fd = *((int *) sock);
 	struct temp_storage temp_data;
 	char buff[256];
-	int rx_bytes;
-	
+
+	/* Get address of remote end */
 	struct sockaddr_storage their_addr;
 	socklen_t their_len = sizeof their_addr;
 	getpeername(new_fd, (struct sockaddr*)&their_addr, &their_len);
 
+	/* Receive the message */
 	rx_bytes = recv(new_fd, buff, 256, 0);
+	timerx = time(0);
 	printf("Received %d bytes: \"%s\".\r\n", rx_bytes, buff);
-	/*
-			char ipstr[INET6_ADDRSTRLEN];
-			struct sockaddr_in *s = (struct sockaddr_in *)&their_addr;
-			inet_ntop(AF_INET, &s->sin_addr, ipstr, sizeof ipstr);
-			printf("[DEBUG!!] TempDB: IP: %s\n\r", ipstr);
-	*/
+
+	/* Process the message */
 	node_msg* rx_msg;
 	rx_msg = deserialize(buff);
-	//print_node_list_msg(rx_msg);
 	while(rx_msg != NULL) {
 		switch(rx_msg->operation) {
 			case REPORT_TEMPERATURE:
-				//append_db_data(temp_database, &temp_data, rx_msg->operand, &their_addr);
 				append_db_data(&temp_data, rx_msg->operand, &their_addr);
-                                //print_node_list(temp_database);
 				break;
 			case TEMP_TIMESTAMP:
 				append_db_timestamp(&temp_data, rx_msg->operand);
@@ -204,13 +225,15 @@ void *data_network_worker(void *con)
 				break;
 			case GET_AVG_TEMP:
 				report_average_temperature (new_fd);
-				//remove_node_msg(list, *list);
 				break;
+			case REQ_TIME:
+				report_time_values(new_fd, timerx);
 			default:
 				break;
 		}
 		rx_msg = rx_msg->next;
 	}
+	/* Cleanup after the thread is finished */
 	close(new_fd);
 	pthread_exit(NULL);
 }

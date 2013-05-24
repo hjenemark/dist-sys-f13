@@ -6,18 +6,14 @@
 
 int get_socket(struct network_params *np, struct peer_net_params *pnp, int socket_type)
 {
-	/**
-     * Ensure that local and remote IP versions does not conflict.
-    */
+	/* Ensure that local and remote IP versions does not conflict. */
 	if((pnp->family == AF_INET && np->family == AF_INET6) ||
 	   (pnp->family == AF_INET6 && np->family == AF_INET)) {
 		printf("[Common] Local and Remote IP versions does not match!\r\n");
 		return -1;
 	}
 
-	/**
-     * Populate hints for network setup
-    */
+	/* Populate hints for network setup */
 	struct addrinfo host_hints, *host_res;
 	int sockfd, rv;
 
@@ -30,7 +26,7 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 	if (np->net_mode == USER_PROVIDED_IP) {
 		host_hints.ai_family = pnp->family;
 		host_hints.ai_socktype = SOCK_STREAM;
-		node = np->ipstr; //TODO Fix this
+		node = np->ipstr;
 	} else {
 		host_hints.ai_family = pnp->family;
 		host_hints.ai_socktype = SOCK_STREAM;
@@ -38,9 +34,7 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		node = NULL;
 	}
 
-	/**
-     * Populates hints based on socket type.
-    */
+	/* Populates hints based on socket type.*/
 	switch (socket_type) {
 		case CONTROL_LISTEN:
 			sprintf(port_str, "%d", ADMIN_PORT);
@@ -52,7 +46,6 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 			host_hints.ai_socktype = SOCK_STREAM;			
 			break;
 		case DATA_SUBMIT:
-			//port_str = NULL;
 			sprintf(port_str, "%d", 0);
 			sprintf(peer_port_str, "%d", DATA_PORT);
 			host_hints.ai_socktype = SOCK_STREAM;			
@@ -64,17 +57,13 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		return -1;
 	}
 
-	/**
-     * Create and bind socket to required parameters
-    */
+	/* Create and bind socket to required parameters */
 	if ((sockfd = socket(host_res->ai_family, host_res->ai_socktype, host_res->ai_protocol)) == -1) {
 		perror("client: socket");
 		return -1;
 	}
 
-	/**
-	 * Make socket broadcast
-	 */
+	/* Make socket broadcast and reusable */
 	int yes = 1;
 	if(socket_type == CONTROL_LISTEN) {
 		if (setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &yes,
@@ -89,6 +78,7 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		}
 	}
 
+	/* Bind socketing to specific IP */
 	if (np->net_mode == USER_PROVIDED_IP || 
 	    socket_type == CONTROL_LISTEN ||
 	    socket_type == DATA_LISTEN) {
@@ -98,6 +88,7 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		}
 	}
 
+	/* Start listening to socket */
 	if (socket_type == DATA_LISTEN) {
 		if (listen(sockfd, CONN_BACKLOG) == -1) {
 		    perror("listen");
@@ -105,9 +96,7 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		}
 	}
 
-	/**
-     * Print informations about local socket.
-    */
+	/* Print informations about local socket. */
 	char host_ipstr[INET6_ADDRSTRLEN];
 	void *host_addr;
 	int host_port;
@@ -127,9 +116,7 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		return sockfd;
 	}
 	
-	/**
-     * Populates hints for remote connection.
-    */
+	/* Populates hints for remote connection. */
 	struct addrinfo peer_hints, *peer_res;
 	memset(&peer_hints, 0, sizeof peer_hints);
 
@@ -140,9 +127,7 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 		return -1;
 	}
 
-	/**
-     * Print information about remote connection.
-    */
+	/* Print information about remote connection. */
 	char peer_ipstr[INET6_ADDRSTRLEN];
 	void *peer_addr;
 	int peer_port;
@@ -156,15 +141,14 @@ int get_socket(struct network_params *np, struct peer_net_params *pnp, int socke
 	inet_ntop(peer_res->ai_family, peer_addr, peer_ipstr, sizeof peer_ipstr);
 	printf("[Common] Peer ver %s Peer addr: %s:%d\r\n", ipver, peer_ipstr, ntohs(peer_port));
 	
-	/**
-     * Create connection and free no longer needed hints.
-    */
+	/* Create connection and free no longer needed hints. */
 	if (connect(sockfd, peer_res->ai_addr, peer_res->ai_addrlen) == -1) {
 		close(sockfd);
 		perror("client: connect");
 		return -1;
     }
 
+	/* Free data structures */
 	freeaddrinfo(peer_res);
 	freeaddrinfo(host_res);
 		
@@ -176,6 +160,5 @@ void *get_in_addr(struct sockaddr *sa)
     if (sa->sa_family == AF_INET) {
         return &(((struct sockaddr_in*)sa)->sin_addr);
     }
-
     return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }

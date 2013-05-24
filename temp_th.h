@@ -19,7 +19,7 @@ void *temperature_thread_entry();
 /** 
  * \brief Reads temperature of sensor. Random number based.
  *
- * \return Signed temperature value.
+ * \return Temperature value.
  **/
 int8_t get_temperature();
 
