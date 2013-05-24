@@ -85,8 +85,8 @@ node_msg* deserialize(char* data){
 
     end = strlen(data);
 
-    printf("-- De-serializing --\n");
-    printf("-- data: %s\n", data);
+    //printf("-- De-serializing --\n");
+    //printf("-- data: %s\n", data);
     
     while(marker < end){
         temp_char[0] = data[marker++];
@@ -110,7 +110,7 @@ node_msg* deserialize(char* data){
         free(t_operand);
     }
 
-    printf("-- End of de-serializing --\n");
+    //printf("-- End of de-serializing --\n");
     //free(data);
     return new_list;
 }

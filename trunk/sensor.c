@@ -3,6 +3,7 @@
  * The sensor main thread.
  * Checks the parameters and starts the worker threads.
  **/
+#include <signal.h>
 #include "sensor.h"
 #include "globals.h"
 
@@ -19,6 +20,10 @@ pthread_mutex_t mutex_timeoffset;
 
 struct network_params np;
 
+void sigchld_handler(int s)
+{
+    while(waitpid(-1, NULL, WNOHANG) > 0);
+}
 /** 
  * \brief Checks startup parameters
  *
@@ -70,6 +75,7 @@ void check_startup_params(int argc, char *argv[])
 
 int main (int argc, char *argv[])
 {
+    struct sigaction sa;
 	np.ipstr[0] = '\0';
 	
 	printf("Sensor process implementation\r\n");
@@ -91,6 +97,13 @@ int main (int argc, char *argv[])
 	
 	pthread_t threads[3];
 	
+        sa.sa_handler = sigchld_handler;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = SA_RESTART;
+        if(sigaction(SIGCHLD, &sa, NULL) == -1){
+            perror("sigaction");
+            exit(1);
+        }
 	if(pthread_create(
 			&threads[0], NULL, 
 			temperature_thread_entry, NULL)) {
