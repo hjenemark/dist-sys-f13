@@ -1,4 +1,6 @@
-
+/**
+ * \file sense_db.c
+ **/
 #include <time.h>
 #include <stdlib.h>
 #include <stdbool.h>

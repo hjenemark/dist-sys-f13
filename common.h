@@ -1,5 +1,6 @@
 /**
  * \file common.h
+ * Provides constants and network parameters to be used in all entities of the project
  **/
 
 #include <stdio.h>
@@ -67,15 +68,6 @@ struct peer_net_params {
 	int family;						/*!< IP version */
 	char ipstr[INET6_ADDRSTRLEN];	/*!< Textual representation of IP address */
 };
-
-/**
- * \brief Encode message for sending over network.
- * 
- * For operation REPORT_TEMPERATUR this function uses the prototype:
- * char* encode_message( uint32_t operation, int8_t temperature, char* ipstr
- **/
-char* encode_message( uint32_t operation, ...);
-void* decode_message( char* message);
 
 /** 
  * \brief Returns socket based on requested parameters.

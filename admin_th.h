@@ -1,3 +1,9 @@
+/**
+ * \file admin_th.h
+ *
+ * Provides an entry to the admin_th.c functions
+ **/
+
 #include "common.h"
 
 #ifndef __ADMIN_TH_HEADER

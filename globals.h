@@ -1,3 +1,6 @@
+/**
+ * \file globals.h
+ **/
 extern int32_t node_is_master;
 extern int32_t current_master_id;
 extern pthread_mutex_t mutex_master_params;

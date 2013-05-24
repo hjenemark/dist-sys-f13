@@ -1,8 +1,10 @@
 /**
  * \file msg_list.c
+ *
+ * Provides the funcitonality of a single linked list with the data from a TLV string.
+ * This includes serilization and deserialization functions
  */
 
-#include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

@@ -1,5 +1,6 @@
 /**
  * \file user.c
+ * Forms the command line user interface for interacting with the admin node.
  **/
 #include <stdbool.h>
 #include "user.h"
