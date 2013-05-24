@@ -25,7 +25,8 @@ void *temperature_thread_entry()
 /* TODO: Implement temperature reading */
 int8_t get_temperature()
 {
-	return 8;
+    int32_t temp_seed = time(NULL);
+    return temp_seed % 100;
 }
 
 int8_t get_admin_params(struct peer_net_params *pnp)
