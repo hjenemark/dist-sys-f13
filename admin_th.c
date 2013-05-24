@@ -52,14 +52,14 @@ void recurse_worker(int32_t socket)
 
 		printf("[ADMIN DEBUG]: Node is master. Broadcasting.\r\n");
 
-		/* Preprare message containing admin IP address */
+		/* Prepare message containing admin IP address */
 		char ipstr[INET6_ADDRSTRLEN];
 		strcpy (ipstr,np.ipstr);
 		int32_t addrlen = strlen(ipstr);
 		printf("[ADMIN DEBUG]: Master IP Len: %d IP: %s\r\n", addrlen, ipstr);
 		add_node_msg (&node_msg, ANNOUNCE_MASTER, addrlen, ipstr);
 
-		/* Preprare message containing current admin ID number */
+		/* Prepare message containing current admin ID number */
 		buflen = snprintf(buffer, 15, "%d", cpy_node_masterid);
 		add_node_msg (&node_msg, PROMO_KEY, buflen, buffer);
 
@@ -109,7 +109,7 @@ void recurse_worker(int32_t socket)
 			char s[INET6_ADDRSTRLEN];
 			char buf[100];
 
-			/* Preprate temporaty variables */
+			/* Prepare temporaty variables */
 			char temp_ip[INET6_ADDRSTRLEN];
 			temp_ip[0]='0';
 			int32_t temp_master_id=0;
@@ -121,7 +121,7 @@ void recurse_worker(int32_t socket)
 	   			perror("recvfrom");
 				exit(1);
 			}
-			buf[numbytes] = '\0';
+			//buf[numbytes] = '\0';
 
 			printf("[Admin]: got packet from %s\n",
     			inet_ntop(their_addr.ss_family,
@@ -135,9 +135,11 @@ void recurse_worker(int32_t socket)
 			while(rx_msg != NULL) {
 				switch(rx_msg->operation) {
 					case ANNOUNCE_MASTER:
-						/* Store admin node's IP address to tem variable */
+						/* Store admin node's IP address to temp variable */
 						printf("[Admin]: New master announcement:  %s\n", rx_msg->operand);
-						strncpy(temp_ip, rx_msg->operand, rx_msg->op_size);
+						//strncpy(temp_ip, rx_msg->operand, rx_msg->op_size);
+						strcpy(temp_ip, rx_msg->operand);
+                                                printf("[Admin] Debug: temp_ip: %s\n", temp_ip);
 						temp_af_family = their_addr.ss_family;
 						if(temp_master_id != 0) {
 							/* Master announcement is valid - save it */
@@ -147,6 +149,7 @@ void recurse_worker(int32_t socket)
 							strncpy(admin_net_params.ipstr, temp_ip, strlen(temp_ip));
 							current_master_id = temp_master_id;
 							pthread_mutex_unlock (&mutex_adminp);
+                                                        printf("[Admin] Debug: admin_net_params.ipstr: %s\n", admin_net_params.ipstr);
 							temp_master_id=0;
 							temp_ip[0] = '0';
 							/* New master found. Update time offset */
@@ -203,7 +206,11 @@ void calculate_time_offset()
 
 	/* Create socket and send data */
 	int32_t socket;
+        printf("[Admin] Debug: %s\n", np.ipstr);
+        printf("[Admin] Debug: %s\n", admin_net_params.ipstr);
+        
 	socket = get_socket(&np, &admin_net_params, DATA_SUBMIT);
+    
 	time_req_sent = time(0);
 	send(socket, msg, len, 0);
 
@@ -214,7 +221,7 @@ void calculate_time_offset()
 		printf("Remote end closed connection!\r\n");
 	}
 	time_rep_rx = time(0);
-	buff[rx_bytes] = '\0';
+	//buff[rx_bytes] = '\0';
 	
 	/* Deserialize the data */
 	struct node_message* rx_msg;
