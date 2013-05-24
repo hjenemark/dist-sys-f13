@@ -129,6 +129,7 @@ int main (int argc, char *argv[])
 	
 	/* Loop while sensor is alive */
 	while (1) {
+		sleep(1);
 	}
 
 	printf("Bye!\r\n");
