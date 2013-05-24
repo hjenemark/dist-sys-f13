@@ -23,7 +23,7 @@ void *admin_network_thread_entry()
 	np1.net_mode = USER_PROVIDED_IP;
 	np1.family = AF_INET;
 	//strcpy(np1.ipstr, "10.10.10.255");
-	strcpy(np1.ipstr, "255.255.255.255");
+	strcpy(np1.ipstr, "10.10.10.255");
 
 	socketfd = get_socket(&np1, &pnp, CONTROL_LISTEN);
 
@@ -59,8 +59,14 @@ void recurse_worker(int32_t socket)
 		struct node_message *node_msg = NULL;
 		struct addrinfo hints, *servinfo;
 		struct sockaddr_in their_addr;
+
+		printf("ADMIN DEBUG: Node is master. Broadcasting.\r\n");
+		char ipstr[INET6_ADDRSTRLEN];
+		strcpy (ipstr,np.ipstr);
+		int32_t addrlen = strlen(ipstr);
+		printf("ADMIN DEBUG: Master IP Len: %d IP: %s\r\n", addrlen, ipstr);
 		
-		add_node_msg (&node_msg, ANNOUNCE_MASTER, 0, NULL);
+		add_node_msg (&node_msg, ANNOUNCE_MASTER, addrlen, ipstr);
 		buflen = snprintf(buffer, 15, "%d", cpy_node_masterid);
 		add_node_msg (&node_msg, PROMO_KEY, buflen, buffer);
 
@@ -127,6 +133,11 @@ void recurse_worker(int32_t socket)
         		get_in_addr((struct sockaddr *)&their_addr),
         		s, sizeof s));
 
+			char ipstr[INET6_ADDRSTRLEN];
+			struct sockaddr_in *st = (struct sockaddr_in *)&their_addr;
+			inet_ntop(AF_INET, &st->sin_addr, ipstr, sizeof ipstr);
+			printf("[DEBUG] REAL Sensor IP address: %s\n", ipstr);
+
 			node_msg* rx_msg;
 			rx_msg = deserialize(buf);
 			print_node_list_msg(rx_msg);
@@ -134,10 +145,10 @@ void recurse_worker(int32_t socket)
 				switch(rx_msg->operation) {
 					case ANNOUNCE_MASTER:
 						pthread_mutex_lock (&mutex_adminp);
-						strcpy(admin_net_params.ipstr, s);
+						strncpy(admin_net_params.ipstr, rx_msg->operand, rx_msg->op_size);
 						admin_net_params.family=their_addr.ss_family;
 						pthread_mutex_unlock (&mutex_adminp);
-						printf("[Admin]: New master announcement:  %s\n", s);
+						printf("[Admin]: New master announcement:  %s\n", admin_net_params.ipstr);
 						break;
 					case PROMO_KEY:
 						pthread_mutex_lock (&mutex_adminp);
