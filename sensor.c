@@ -4,6 +4,8 @@
  * Checks the parameters and starts the worker threads.
  **/
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "sensor.h"
 #include "globals.h"
 
