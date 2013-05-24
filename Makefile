@@ -3,7 +3,7 @@
 CC=gcc
 CFLAGS = -Wall
 OFLAGS = -c
-LFLAGS = -lpthread -lm
+LFLAGS = -lpthread
 PROJ = sensor
 BIN = sensor user 
 SENOBJS = sensor.o temp_th.o admin_th.o data_th.o common.o sense_db.o sens_list.o msg_list.o
@@ -55,14 +55,8 @@ memcheck: $(PROJ)
 run: $(PROJ)
 	./$(PROJ)
 
-# Usage: make multi COUNT=<integer>
-COUNT=5
-multi: $(PROJ)
-	./runMultiple.sh $(COUNT) $(PROJ)
 clean: 
 	rm $(BIN) *.o
 
-# Don't add the resulting html and latex folders to the repository
-# They can be produced by this makefile on demand.
 dox:
 	doxygen distDoxy
