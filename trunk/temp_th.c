@@ -23,11 +23,11 @@ void *temperature_thread_entry()
         pthread_exit(NULL);
 }
 
-/* TODO: Implement temperature reading */
 int8_t get_temperature()
 {
-    int32_t temp_seed = time(NULL);
-    return temp_seed % 100;
+    srand(time(NULL));
+    int32_t random_temp = rand() % 50;
+    return random_temp;
 }
 
 int8_t get_admin_params(struct peer_net_params *pnp)
