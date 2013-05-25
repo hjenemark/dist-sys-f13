@@ -244,6 +244,7 @@ void calculate_time_offset()
 
 	/* Calculate time offset */
 	int32_t timeoffset;
+	printf("[Admin] Time values: t1 %d t2 %d t3 %d t4 %d\r\n",time_req_sent, time_req_rx, time_rep_sent, time_rep_rx);
 	timeoffset=(int32_t)((time_req_rx-time_req_sent)+(time_rep_sent-time_rep_rx))/2;
 	printf("[Admin] Time offset is %d!\r\n", timeoffset);
 
