@@ -1,0 +1,65 @@
+\section{Test setup and execution}
+\label{sec:appendixtest}
+\subsection{Test setup}
+\label{subsec:testsetup}
+To prepare a computer for testing the sensor network it is necessary to setup extra network interfaces. In Ubuntu this is done with the following command:
+\begin{quotation}
+    $\sim$\# ipconfig eth0:x $<$new\_ip$>$ netmask $<$netmask$>$
+\end{quotation}
+In this situation the ethernet port \texttt{eth0} is used for the testing and only because it is not used for anything else. The \texttt{x} is the desired number for the new pseudo interface. \texttt{new\_ip} is the desired new IP address and the \texttt{netmask} is the netmask used. In the test one interface was set up using the following command: 
+\begin{quotation}
+    $\sim$\# ipconfig eth0:1 10.10.10.1 netmask 255.255.255.0
+\end{quotation}
+
+This command is executed as many times as desired to form the basis for the test.
+
+\subsection{Test execution}
+\label{subsec:testexecution}
+After the preparations is done it is now possible to run a number of instances of the \texttt{sensor} program. Each instance is tied to one interface, hence the number of interfaces is the maximum number of possible instances. The \texttt{sensor} is executed with the following command:
+\begin{quotation}
+    $\sim$\# ./sensor v4 $<$ip$>$
+\end{quotation}
+Where \texttt{ip} is any of the available IP adresses set up earlier and \texttt{v4} indicates that an IPv4 address will be provided.
+
+The following will describe a number of test cases to show the functionality of the system.
+\subsubsection{Start up}
+\label{subsubsec:startuptest}
+Whith the sensor instances running one \texttt{user} is needed to promote one sensor node to admin. This is done with the following:
+\begin{enumerate}
+    \item Start the user
+        \begin{quotation}
+            $\sim$\# ./user
+        \end{quotation}
+    \item Enter \texttt{2} for Connect to node.
+    \item Enter IP address of a sensor node.
+    \item Enter \texttt{3} for Promote node.
+\end{enumerate}
+After this test a number of sensor nodes is running of which one has been promoted to admin node and the user program is running.
+\subsubsection{Adding a sensor node to the network}
+\label{subsubsec:addingnodetest}
+This test assumes completion of section \ref{subsubsec:startuptest} and a running sensor network with the admin node functioning. 
+
+The only step in this test is to start up a new instance of the sensor program and see that it finds the admin node and starts transmitting temperature data.
+
+\subsubsection{Getting a new admin node}
+\label{subsubsec:newadmintest}
+This test assumes completion of section \ref{subsubsec:startuptest}.
+\begin{enumerate}
+    \item Stop the admin node instance
+    \item With the user promote another sensor to admin node as in section \ref{subsubsec:startuptest}.
+\end{enumerate}
+All working sensors will now receive the broadcast message from the new admin node and start transmitting data to the new admin.
+
+\subsubsection{Fetching the average temperature of all nodes}
+\label{subsubsec:fetchtemptest}
+This test assumes completion of section \ref{subsubsec:startuptest}. All interaction in this test is done with the user program.
+\begin{enumerate}
+    \item Enter \texttt{2} for Connect to (admin) node.
+    \item Enter IP address on the admin node.
+    \item Enter \texttt{4} for Get average T from node.
+\end{enumerate}
+The user should now see a temperature value in the terminal.
+\subsection{Test output}
+\label{subsec:testoutput}
+
+---- put test output here ----

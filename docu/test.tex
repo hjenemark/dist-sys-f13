@@ -1,0 +1,18 @@
+\section{Test of the system}
+\label{sec:testing}
+In the following first the key test setup and then the main test objectives is described.
+
+The sensor network is tested in a Linux environment on two laptops running Ubuntu. These two laptops are interconnected with an ethernet cable. For further details on the setup see \ref{subsec:testsetup}.
+
+The testing is done to document that the functionality is as expected and acts as outlined in the project description. To test this, the following steps is executed:
+\begin{enumerate}
+    \item A number of instances of the sensor program is started
+    \item The user program is started seperately.
+    \item Promote one sensor to admin.
+\end{enumerate}
+This scenario will test that everything works initially and that every part of the software runs. 
+After this startup procedure a random non-admin node is stopped and started again to show that it will find the admin node again. Then the admin node is stopped and a new one is promoted, to show that the sensor nodes can switch admin node without userinteraction.
+Terminal output is shown in section \ref{subsec:testoutput}.
+
+This will show a working system that fulfills the requirements outlined in the project description.
+
