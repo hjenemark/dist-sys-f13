@@ -1,0 +1,17 @@
+\section{Introduction}
+\label{sec:intro}
+
+Sometimes grasping the big picture of a situation means piecing it together from very small parts. This could be as diverse as how a structure is reacting to an earthquake, the currents movements in the oceans, the change of weather in an entire country or something as volatile as the conditions inside a tornado.
+Even though the conditions and situations are different it all boils down to collecting specific data from individual locations at certain time intervals and then process it for further study.
+
+In order to deliver each datapoint it is necessary to set up a certain type of infrastructure and software architecture. This comprises a medium through which the data is to be send and a piece of software to handle the sending and recieving of the data - the middleware.
+
+This project is focused on the middleware. With a layered approached this middleware will seperate the data transfer and the coordination into two different parts. This way the transport medium could be replaced to fit the context of the application. In the given situation the data transfer layer will use TCP as a reliable channel.
+
+In the context of monitoring the temperature in a given situation the data is the temperature value and its origin - time and place. The 'place' in this project is the ID of the sensor that captured the temperature value. 
+
+Each sensor node will be able to take one of two roles - normal or admin. In \textit{normal} mode the node sends out the data periodically, and in \textit{admin} mode the data is collected and organised. A 3$^{rd}$ role in the system is the \textit{user} who can request the average temperature from the current admin node and promote a normal node to admin. 
+
+The goal of this project is to get a current status of the temperature in a fictive scenario using distributed concepts. 
+The proposed sulution is designed for a Linux context and implemented using the C programming language. 
+ 

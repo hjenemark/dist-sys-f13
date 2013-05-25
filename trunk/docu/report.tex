@@ -1,0 +1,52 @@
+\title{
+    Temperature Monitoring Network\\
+    02220 Distributed Systems 
+}
+\author{
+        Justas Poderys \\
+        s120944
+        \and
+        Hans-Jacob S\o rensen Enemark \\
+        s122509	
+}             
+
+\date{May 27, 2013}
+
+\documentclass[12pt]{article}
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=3cm]{geometry}
+%\usepackage[T1]{fontenc}
+%\usepackage{lmordern}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{textcomp}
+\usepackage{float}
+\usepackage{hyperref}
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{0ex}%
+   {-3.25ex plus -1ex minus -0.2ex}%
+   {1.5ex plus 0.2ex}%
+   {\normalfont\normalsize\bfseries}}
+\makeatother
+\frenchspacing
+
+\stepcounter{secnumdepth}
+\stepcounter{tocdepth}
+
+\begin{document}
+\maketitle
+\setcounter{tocdepth}{2}
+\newpage
+\tableofcontents
+\newpage
+
+%Main part of report
+\input{intro.tex}
+\input{mainidea.tex}
+\input{design.tex}
+\input{implementation.tex}
+\input{test.tex}
+\input{conclusion.tex}
+%the rest of it
+\appendix
+\input{testexecution.tex}
+\end{document}
