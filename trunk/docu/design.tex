@@ -13,11 +13,11 @@ To keep the system going the messages are passed between the sensor nodes and th
 \label{fig:messages}
 \end{figure}
 
-These messages are sent using \textit{exactly once} semantics, through TCP. This way the application level software only has to hand over the message to the transport layer and it will be sent reliably.
+These messages are sent using \textit{at-most-once} semantics, through TCP. This way the application level software only has to hand over the message to the transport layer and it will be sent reliably.
 
 As it is shown in Figure~\ref{fig:messages} every node has to fill the role as a sensor. That means that the admin node has to have two roles. To achieve this the sensor software is devided into three parts - one for each of the jobs mentioned in section \ref{sec:proposedsolution}. With a clear seperation it is possible for the admin node to send temperature data to itself and thus keep working with two roles.
 
-Special care must be given to the fact that there might be several master nodes operating at the same time. This can happen when first master node goes down and next node is promoted to be a master node. In the case that first master nodes comes up thinking that it is still a master node, there will be a situation with two master nodes working at the same time. To provent this each promotion to master node from simple node carries a pormotion key. Promotio key is increased by user node each time new promotion is done. When master nodeannounces itself to be a master node by broadcasting this information, it includes master key in a announcment. If temperature node receives announcment from a node with a master key lower than current configured, this announcment will be ignored.
+Special care must be given to the fact that there might be several master nodes operating at the same time. This can happen when first master node goes down and next node is promoted to be a master node. In the case that first master nodes comes up thinking that it is still a master node, there will be a situation with two master nodes working at the same time. To prevent this each promotion to master node from simple node carries a promotion key. The promotion key is increased by the user node each time a new promotion is done. When master node announces itself to be a master node by broadcasting this information, it includes the master key in an announcment. If temperature node receives announcement from a node with a master key lower than current configured, this announcement will be ignored.
 
 %%%%%%%%%%%%%%
 %%%% The following might be implementation description ...?
