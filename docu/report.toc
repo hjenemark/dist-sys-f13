@@ -17,7 +17,6 @@
 \contentsline {subsection}{\numberline {A.1}Test setup}{9}{subsection.A.1}
 \contentsline {subsection}{\numberline {A.2}Test execution}{10}{subsection.A.2}
 \contentsline {subsubsection}{\numberline {A.2.1}Start up}{10}{subsubsection.A.2.1}
-\contentsline {subsubsection}{\numberline {A.2.2}Adding a sensor node to the network}{10}{subsubsection.A.2.2}
+\contentsline {subsubsection}{\numberline {A.2.2}Adding a sensor node to the network}{11}{subsubsection.A.2.2}
 \contentsline {subsubsection}{\numberline {A.2.3}Getting a new admin node}{11}{subsubsection.A.2.3}
-\contentsline {subsubsection}{\numberline {A.2.4}Fetching the average temperature of all nodes}{11}{subsubsection.A.2.4}
-\contentsline {subsection}{\numberline {A.3}Test output}{11}{subsection.A.3}
+\contentsline {subsubsection}{\numberline {A.2.4}Fetching the average temperature of all nodes}{12}{subsubsection.A.2.4}

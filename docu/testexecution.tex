@@ -40,6 +40,24 @@ After this test a number of sensor nodes is running of which one has been promot
 This test assumes completion of section \ref{subsubsec:startuptest} and a running sensor network with the admin node functioning. 
 
 The only step in this test is to start up a new instance of the sensor program and see that it finds the admin node and starts transmitting temperature data.
+%slave node finding master
+\begin{verbatim}
+./sensor v4 10.10.10.11
+Sensor process implementation
+HJE & JP. DTU 2013
+User provided IP will be used.
+[Admin] Starting admin thread!
+[Temp] Admin address not know yet!
+[Data] Starting data thread!
+[Temp] Admin address not know yet!
+[Admin]: got packet from 10.10.10.10
+[Admin]: New master announcement:  10.10.10.10
+[Admin]: New master ID announcement:  3
+[Admin] Master id curr: 0 rxd: 3
+[Admin] New valid master announcment!
+[Admin] Calculating time offset!
+[Admin] Time offset is 10!
+\end{verbatim}
 
 \subsubsection{Getting a new admin node}
 \label{subsubsec:newadmintest}
@@ -49,6 +67,25 @@ This test assumes completion of section \ref{subsubsec:startuptest}.
     \item With the user promote another sensor to admin node as in section \ref{subsubsec:startuptest}.
 \end{enumerate}
 All working sensors will now receive the broadcast message from the new admin node and start transmitting data to the new admin.
+\begin{verbatim}
+./sensor v4 10.10.10.12
+Sensor process implementation
+HJE & JP. DTU 2013
+User provided IP will be used.
+[Admin] Starting admin thread!
+[Data] Starting data thread!
+[Temp] Admin address not know yet!
+<snip>
+[Admin]: New master announcement:  10.10.10.10
+[Admin]: New master ID announcement:  4
+[Admin] Master id curr: 0 rxd: 4
+[Admin] New valid master announcment!
+<snip>
+[Admin]: New master announcement:  10.10.10.11
+[Admin]: New master ID announcement:  6
+[Admin] Master id curr: 4 rxd: 6
+[Admin] New valid master announcment!
+\end{verbatim}
 
 \subsubsection{Fetching the average temperature of all nodes}
 \label{subsubsec:fetchtemptest}
@@ -59,7 +96,21 @@ This test assumes completion of section \ref{subsubsec:startuptest}. All interac
     \item Enter \texttt{4} for Get average T from node.
 \end{enumerate}
 The user should now see a temperature value in the terminal.
-\subsection{Test output}
-\label{subsec:testoutput}
 
----- put test output here ----
+\begin{verbatim}
+Select task:
+[1] Quit.
+[2] Connect to node.
+[3] Promote node to Admin mode.
+[4] Get average T from node.
+Enter node IP address:
+10.10.10.11
+Select task:
+[1] Quit.
+[2] Connect to node.
+[3] Promote node to Admin mode.
+[4] Get average T from node.
+4
+Requesting average temperature!
+Average temperature: 13
+\end{verbatim}
