@@ -48,8 +48,14 @@
 \input{test.tex}
 \input{conclusion.tex}
 %the rest of it
-
+%\input{References.tex}
+\label{totalpage}
+%% For bibliography %%
+%
+\bibliographystyle{unsrt} % these / plain / alpha / unsrt / abbrv (http://amath.colorado.edu/documentation/LaTeX/reference/faq/bibstyles.html)
+\bibliography{sources}
+\label{biblo}
 \appendix
 \input{testexecution.tex}
-\include{References}
+%\include{References}
 \end{document}
