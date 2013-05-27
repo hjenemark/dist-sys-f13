@@ -2,22 +2,22 @@
 \contentsline {section}{\numberline {2}Proposed solution}{3}{section.2}
 \contentsline {subsection}{\numberline {2.1}Assumptions}{4}{subsection.2.1}
 \contentsline {section}{\numberline {3}Design}{4}{section.3}
-\contentsline {section}{\numberline {4}Implementation}{5}{section.4}
-\contentsline {subsection}{\numberline {4.1}Sensor node with dual roles}{5}{subsection.4.1}
+\contentsline {section}{\numberline {4}Implementation}{6}{section.4}
+\contentsline {subsection}{\numberline {4.1}Sensor node with dual roles}{6}{subsection.4.1}
 \contentsline {subsection}{\numberline {4.2}User entity}{6}{subsection.4.2}
 \contentsline {subsection}{\numberline {4.3}Message Passing}{7}{subsection.4.3}
 \contentsline {subsection}{\numberline {4.4}IP Version agnosticism}{7}{subsection.4.4}
 \contentsline {subsection}{\numberline {4.5}Messages format}{7}{subsection.4.5}
-\contentsline {subsection}{\numberline {4.6}Time offset calculation}{7}{subsection.4.6}
+\contentsline {subsection}{\numberline {4.6}Time offset calculation}{8}{subsection.4.6}
 \contentsline {subsection}{\numberline {4.7}Threading}{8}{subsection.4.7}
 \contentsline {section}{\numberline {5}Test of the system}{8}{section.5}
 \contentsline {section}{\numberline {6}Conclusion}{9}{section.6}
 \contentsline {subsection}{\numberline {6.1}Responsibilities}{9}{subsection.6.1}
 \contentsline {section}{\numberline {A}Test setup and execution}{9}{appendix.A}
 \contentsline {subsection}{\numberline {A.1}Test setup}{9}{subsection.A.1}
-\contentsline {subsection}{\numberline {A.2}Test execution}{9}{subsection.A.2}
+\contentsline {subsection}{\numberline {A.2}Test execution}{10}{subsection.A.2}
 \contentsline {subsubsection}{\numberline {A.2.1}Start up}{10}{subsubsection.A.2.1}
 \contentsline {subsubsection}{\numberline {A.2.2}Adding a sensor node to the network}{10}{subsubsection.A.2.2}
-\contentsline {subsubsection}{\numberline {A.2.3}Getting a new admin node}{10}{subsubsection.A.2.3}
+\contentsline {subsubsection}{\numberline {A.2.3}Getting a new admin node}{11}{subsubsection.A.2.3}
 \contentsline {subsubsection}{\numberline {A.2.4}Fetching the average temperature of all nodes}{11}{subsubsection.A.2.4}
 \contentsline {subsection}{\numberline {A.3}Test output}{11}{subsection.A.3}
