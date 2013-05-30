@@ -13,8 +13,8 @@
 \contentsline {section}{\numberline {5}Test of the system}{8}{section.5}
 \contentsline {section}{\numberline {6}Conclusion}{9}{section.6}
 \contentsline {subsection}{\numberline {6.1}Responsibilities}{9}{subsection.6.1}
-\contentsline {section}{\numberline {A}Test setup and execution}{9}{appendix.A}
-\contentsline {subsection}{\numberline {A.1}Test setup}{9}{subsection.A.1}
+\contentsline {section}{\numberline {A}Test setup and execution}{10}{appendix.A}
+\contentsline {subsection}{\numberline {A.1}Test setup}{10}{subsection.A.1}
 \contentsline {subsection}{\numberline {A.2}Test execution}{10}{subsection.A.2}
 \contentsline {subsubsection}{\numberline {A.2.1}Start up}{10}{subsubsection.A.2.1}
 \contentsline {subsubsection}{\numberline {A.2.2}Adding a sensor node to the network}{11}{subsubsection.A.2.2}
